@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type DragEvent, type FormEvent, t
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { AlertCircle, ArrowLeft, Building2, CalendarRange, CheckCircle2, FileText, Hourglass, Paperclip, Trash2, UploadCloud, Wallet } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Building2, CalendarRange, CheckCircle2, FileText, Hourglass, Paperclip, ShieldCheck, Trash2, UploadCloud, Wallet } from 'lucide-react'
 import clsx from 'clsx'
 import { Skeleton, Spinner, StatusBadge } from '../components/ui'
 import { notifyContractsChanged } from '../components/NotificationBell'
@@ -19,11 +19,18 @@ interface FormState {
   penyedia: string
   nomor_pks: string
   tanggal_pks: string
+  tanggal_mulai: string
   tanggal_berakhir: string
   nilai_kontrak: string // digit saja
+  critical_pengesahan: string
+  denda: string
+  jaminan_kontrak: string
   keterangan: string
 }
-const EMPTY: FormState = { nama_kontrak: '', penyedia: '', nomor_pks: '', tanggal_pks: '', tanggal_berakhir: '', nilai_kontrak: '', keterangan: '' }
+const EMPTY: FormState = {
+  nama_kontrak: '', penyedia: '', nomor_pks: '', tanggal_pks: '', tanggal_mulai: '', tanggal_berakhir: '', nilai_kontrak: '',
+  critical_pengesahan: '', denda: '', jaminan_kontrak: '', keterangan: '',
+}
 
 function predictStatus(berakhir: string): Status | null {
   if (!berakhir) return null
@@ -85,8 +92,10 @@ export default function ContractForm() {
       .then(({ data: c }) => {
         setExisting(c)
         setF({
-          nama_kontrak: c.nama_kontrak, penyedia: c.penyedia, nomor_pks: c.nomor_pks, tanggal_pks: c.tanggal_pks,
-          tanggal_berakhir: c.tanggal_berakhir, nilai_kontrak: String(c.nilai_kontrak), keterangan: c.keterangan ?? '',
+          nama_kontrak: c.nama_kontrak, penyedia: c.penyedia, nomor_pks: c.nomor_pks, tanggal_pks: c.tanggal_pks, tanggal_mulai: c.tanggal_mulai ?? '',
+          tanggal_berakhir: c.tanggal_berakhir, nilai_kontrak: String(c.nilai_kontrak),
+          critical_pengesahan: c.critical_pengesahan ?? '', denda: c.denda ?? '', jaminan_kontrak: c.jaminan_kontrak ?? '',
+          keterangan: c.keterangan ?? '',
         })
       })
       .catch((e) => { toast('error', 'Kontrak tidak ditemukan', errMsg(e)); nav('/kontrak') })
@@ -105,8 +114,9 @@ export default function ContractForm() {
 
   const sisa = f.tanggal_berakhir ? sisaWaktu(f.tanggal_berakhir) : null
   const status = useMemo(() => predictStatus(f.tanggal_berakhir), [f.tanggal_berakhir])
-  const durasi = f.tanggal_pks && f.tanggal_berakhir && f.tanggal_berakhir > f.tanggal_pks
-    ? Math.round((parseDate(f.tanggal_berakhir).getTime() - parseDate(f.tanggal_pks).getTime()) / 86400000) : null
+  const awal = f.tanggal_mulai || f.tanggal_pks
+  const durasi = awal && f.tanggal_berakhir && f.tanggal_berakhir > awal
+    ? Math.round((parseDate(f.tanggal_berakhir).getTime() - parseDate(awal).getTime()) / 86400000) : null
 
   const pickFile = (fl: File | undefined | null) => {
     if (!fl) return
@@ -138,7 +148,9 @@ export default function ContractForm() {
     if (!f.nomor_pks.trim()) e.nomor_pks = 'Nomor PKS wajib diisi'
     else if (errors.nomor_pks) e.nomor_pks = errors.nomor_pks
     if (!f.tanggal_pks) e.tanggal_pks = 'Pilih tanggal PKS'
-    if (!f.tanggal_berakhir) e.tanggal_berakhir = 'Pilih tanggal berakhir'
+    if (!f.tanggal_mulai) e.tanggal_mulai = 'Pilih tanggal awal kontrak'
+    if (!f.tanggal_berakhir) e.tanggal_berakhir = 'Pilih tanggal akhir kontrak'
+    else if (f.tanggal_mulai && f.tanggal_berakhir <= f.tanggal_mulai) e.tanggal_berakhir = 'Harus setelah tanggal awal kontrak'
     else if (f.tanggal_pks && f.tanggal_berakhir <= f.tanggal_pks) e.tanggal_berakhir = 'Harus setelah tanggal PKS'
     if (!f.nilai_kontrak || Number(f.nilai_kontrak) <= 0) e.nilai_kontrak = 'Isi nilai kontrak'
     setErrors(e)
@@ -196,8 +208,8 @@ export default function ContractForm() {
           </Field>
         </Section>
 
-        <Section icon={<CalendarRange className="h-5 w-5" strokeWidth={1.6} />} title="PKS & masa berlaku" desc="Sisa kontrak dihitung otomatis dari tanggal berakhir.">
-          <Field label="Nomor PKS" error={errors.nomor_pks} className="sm:col-span-2" htmlFor="pks">
+        <Section icon={<CalendarRange className="h-5 w-5" strokeWidth={1.6} />} title="PKS & masa berlaku" desc="Sisa kontrak dihitung otomatis dari tanggal akhir kontrak.">
+          <Field label="Nomor PKS" error={errors.nomor_pks} htmlFor="pks">
             <input id="pks" className={err('nomor_pks')} value={f.nomor_pks} onBlur={checkPks}
               onChange={(e) => { set('nomor_pks', e.target.value); setErrors((s) => ({ ...s, nomor_pks: undefined })) }}
               placeholder="Contoh: 012/PKS/BBT/XI/2026" />
@@ -205,8 +217,11 @@ export default function ContractForm() {
           <Field label="Tanggal PKS" error={errors.tanggal_pks} htmlFor="tpks">
             <input id="tpks" type="date" className={err('tanggal_pks')} value={f.tanggal_pks} onChange={(e) => set('tanggal_pks', e.target.value)} />
           </Field>
-          <Field label="Tanggal berakhir" error={errors.tanggal_berakhir} htmlFor="tend">
-            <input id="tend" type="date" min={f.tanggal_pks || undefined} className={err('tanggal_berakhir')} value={f.tanggal_berakhir}
+          <Field label="Tanggal awal kontrak" error={errors.tanggal_mulai} hint="Mulai berlakunya kontrak / pekerjaan" htmlFor="tstart">
+            <input id="tstart" type="date" className={err('tanggal_mulai')} value={f.tanggal_mulai} onChange={(e) => set('tanggal_mulai', e.target.value)} />
+          </Field>
+          <Field label="Tanggal akhir kontrak" error={errors.tanggal_berakhir} hint="Dipakai untuk sisa kontrak & reminder" htmlFor="tend">
+            <input id="tend" type="date" min={f.tanggal_mulai || f.tanggal_pks || undefined} className={err('tanggal_berakhir')} value={f.tanggal_berakhir}
               onChange={(e) => set('tanggal_berakhir', e.target.value)} />
           </Field>
           <div className="sm:col-span-2">
@@ -222,7 +237,7 @@ export default function ContractForm() {
                   {status === 'segera_habis' && ' — langsung masuk daftar reminder'}
                   {status === 'berakhir' && ' — kontrak sudah berakhir'}
                 </span>
-              ) : 'Isi tanggal berakhir untuk melihat sisa kontrak'}
+              ) : 'Isi tanggal akhir kontrak untuk melihat sisa kontrak'}
             </div>
           </div>
         </Section>
@@ -274,8 +289,24 @@ export default function ContractForm() {
             <input ref={fileInput} type="file" accept={ALLOWED.join(',')} className="hidden" onChange={(e) => { pickFile(e.target.files?.[0]); e.target.value = '' }} />
           </div>
 
-          <Field label="Keterangan" hint="Opsional — catatan internal, misal rencana perpanjangan" className="sm:col-span-2" htmlFor="ket">
-            <textarea id="ket" rows={3} className="input resize-none" value={f.keterangan} onChange={(e) => set('keterangan', e.target.value)} />
+        </Section>
+
+        <Section icon={<ShieldCheck className="h-5 w-5" strokeWidth={1.6} />} title="Ketentuan kontrak" desc="Poin penting yang perlu diperhatikan. Semua kolom opsional, ketik bebas.">
+          <Field label="Critical pengesahan kontrak" hint="Misal: syarat/tahapan yang harus dipenuhi sebelum kontrak sah" className="sm:col-span-2" htmlFor="critical">
+            <textarea id="critical" rows={3} className="input resize-y" value={f.critical_pengesahan} onChange={(e) => set('critical_pengesahan', e.target.value)}
+              placeholder="Contoh: Wajib paraf Direktur Keuangan & review Divisi Hukum sebelum tanda tangan" />
+          </Field>
+          <Field label="Denda" hint="Ketentuan denda keterlambatan / wanprestasi" className="sm:col-span-2" htmlFor="denda">
+            <textarea id="denda" rows={3} className="input resize-y" value={f.denda} onChange={(e) => set('denda', e.target.value)}
+              placeholder="Contoh: 1‰ dari nilai kontrak per hari keterlambatan, maks. 5%" />
+          </Field>
+          <Field label="Jaminan kontrak" hint="Jenis, nilai, dan masa berlaku jaminan" className="sm:col-span-2" htmlFor="jaminan">
+            <textarea id="jaminan" rows={3} className="input resize-y" value={f.jaminan_kontrak} onChange={(e) => set('jaminan_kontrak', e.target.value)}
+              placeholder="Contoh: Jaminan pelaksanaan 5% (Bank Garansi) berlaku s.d. 31 Des 2027" />
+          </Field>
+          <Field label="Keterangan" hint="Catatan internal lainnya, misal rencana perpanjangan" className="sm:col-span-2" htmlFor="ket">
+            <textarea id="ket" rows={3} className="input resize-y" value={f.keterangan} onChange={(e) => set('keterangan', e.target.value)}
+              placeholder="Ketik catatan di sini…" />
           </Field>
         </Section>
       </div>
@@ -295,7 +326,8 @@ export default function ContractForm() {
             {[
               ['Nomor PKS', f.nomor_pks || '—'],
               ['Tanggal PKS', f.tanggal_pks ? tanggal(f.tanggal_pks) : '—'],
-              ['Berakhir', f.tanggal_berakhir ? tanggal(f.tanggal_berakhir) : '—'],
+              ['Awal kontrak', f.tanggal_mulai ? tanggal(f.tanggal_mulai) : '—'],
+              ['Akhir kontrak', f.tanggal_berakhir ? tanggal(f.tanggal_berakhir) : '—'],
               ['Durasi', durasi ? `${durasi} hari` : '—'],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-4">

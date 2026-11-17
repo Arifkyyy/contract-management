@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { AlertTriangle, CheckCircle2, Clock, RefreshCw, X, XCircle } from 'lucide-react'
+import { AlertTriangle, Ban, CheckCircle2, Clock, RefreshCw, X, XCircle } from 'lucide-react'
 import clsx from 'clsx'
 import type { Status } from '../lib/types'
 
@@ -29,6 +29,7 @@ const STATUS_STYLE: Record<Status, { cls: string; icon: typeof Clock; label: str
   segera_habis: { cls: 'bg-status-warnBg text-status-warn', icon: AlertTriangle, label: 'Segera Habis' },
   berakhir: { cls: 'bg-status-endBg text-status-end', icon: XCircle, label: 'Berakhir' },
   diperpanjang: { cls: 'bg-status-renewBg text-status-renew', icon: RefreshCw, label: 'Diperpanjang' },
+  tidak_diperpanjang: { cls: 'bg-status-offBg text-status-off', icon: Ban, label: 'Tidak Diperpanjang' },
 }
 export const statusMeta = STATUS_STYLE
 
@@ -50,7 +51,7 @@ export function TimeBar({ progress, status }: { progress: number; status: Status
     gsap.fromTo(ref.current, { scaleX: 0 }, { scaleX: progress / 100, duration: 1.1, ease: 'power3.out', delay: 0.15 })
   }, [progress])
   const color =
-    status === 'berakhir' ? 'bg-status-end' : status === 'segera_habis' ? 'bg-status-warn' : status === 'diperpanjang' ? 'bg-status-renew' : 'bg-gradient-to-r from-champagne-500 to-champagne-300'
+    status === 'berakhir' ? 'bg-status-end' : status === 'segera_habis' ? 'bg-status-warn' : status === 'diperpanjang' ? 'bg-status-renew' : status === 'tidak_diperpanjang' ? 'bg-status-off' : 'bg-gradient-to-r from-champagne-500 to-champagne-300'
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[.07]">
       <div ref={ref} className={clsx('h-full origin-left rounded-full', color)} style={{ transform: `scaleX(${progress / 100})` }} />

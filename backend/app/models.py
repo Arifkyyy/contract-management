@@ -27,15 +27,23 @@ class Contract(Base):
     penyedia: Mapped[str] = mapped_column(String(255), index=True)
     nomor_pks: Mapped[str] = mapped_column(String(120), unique=True, index=True)
     tanggal_pks: Mapped[date] = mapped_column(Date)
+    tanggal_mulai: Mapped[date | None] = mapped_column(Date, nullable=True)  # tanggal awal kontrak
     tanggal_berakhir: Mapped[date] = mapped_column(Date, index=True)
     nilai_kontrak: Mapped[int] = mapped_column(BigInteger, default=0)  # dalam Rupiah
+    critical_pengesahan: Mapped[str | None] = mapped_column(Text, nullable=True)
+    denda: Mapped[str | None] = mapped_column(Text, nullable=True)
+    jaminan_kontrak: Mapped[str | None] = mapped_column(Text, nullable=True)
     keterangan: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     file_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     file_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
     file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
+    # Lama (sebelum ada proses perpanjangan) — tidak dipakai lagi, diganti status_proses
     diperpanjang: Mapped[bool] = mapped_column(Boolean, default=False)
+    # belum / proses / diperpanjang / tidak_diperpanjang (lihat services/status.py)
+    status_proses: Mapped[str] = mapped_column(String(30), default="belum", server_default="belum", index=True)
+    catatan_proses: Mapped[str | None] = mapped_column(Text, nullable=True)
     # 0 = belum pernah, 1 = sudah kirim tahap 3 bulan, 2 = tahap 1 bulan, 3 = tahap 7 hari
     reminder_stage: Mapped[int] = mapped_column(Integer, default=0)
 
@@ -43,6 +51,35 @@ class Contract(Base):
     created_by: Mapped[Admin | None] = relationship()
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    addendums: Mapped[list["Addendum"]] = relationship(
+        back_populates="contract", cascade="all, delete-orphan", order_by="Addendum.urutan", lazy="selectin",
+    )
+
+
+class Addendum(Base):
+    """Riwayat perpanjangan kontrak (addendum / amandemen)."""
+    __tablename__ = "addendums"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    contract_id: Mapped[int] = mapped_column(ForeignKey("contracts.id", ondelete="CASCADE"), index=True)
+    contract: Mapped[Contract] = relationship(back_populates="addendums")
+    urutan: Mapped[int] = mapped_column(Integer)  # addendum ke-1, ke-2, ...
+    nomor: Mapped[str] = mapped_column(String(120))
+    tanggal: Mapped[date] = mapped_column(Date)
+    tanggal_akhir_lama: Mapped[date] = mapped_column(Date)
+    tanggal_akhir_baru: Mapped[date] = mapped_column(Date)
+    nilai_lama: Mapped[int] = mapped_column(BigInteger)
+    nilai_baru: Mapped[int] = mapped_column(BigInteger)
+    catatan: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    file_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    file_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    created_by_id: Mapped[int | None] = mapped_column(ForeignKey("admins.id", ondelete="SET NULL"), nullable=True)
+    created_by: Mapped[Admin | None] = relationship(lazy="joined")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
 class ReminderLog(Base):

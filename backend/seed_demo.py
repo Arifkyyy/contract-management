@@ -48,7 +48,7 @@ def seed():
                 nama_kontrak=nama, penyedia=penyedia, nomor_pks=nomor,
                 tanggal_pks=berakhir - relativedelta(months=durasi), tanggal_berakhir=berakhir,
                 nilai_kontrak=nilai, created_by_id=admin.id if admin else None,
-                diperpanjang=(i == 11),
+                status_proses=('diperpanjang' if i == 11 else 'belum'),
             ))
         db.commit()
     print(f"OK: {len(DATA)} kontrak demo siap.")

@@ -12,10 +12,13 @@ from sqlalchemy.orm import Session, joinedload
 from ..auth import get_current_admin
 from ..config import settings
 from ..database import get_db
-from ..models import Admin, Contract
-from ..schemas import ContractList, ContractOut, RenewIn
+from ..models import Addendum, Admin, Contract
+from ..schemas import ContractList, ContractOut, ProsesIn
 from ..services import exporter
-from ..services.status import AKTIF, BERAKHIR, DIPERPANJANG, SEGERA_HABIS, reminder_threshold, today
+from ..services.status import (
+    AKTIF, ALL_STATUS, BERAKHIR, DIPERPANJANG, PROSES_BELUM, PROSES_DIPERPANJANG, PROSES_TERBUKA, PROSES_TIDAK,
+    SEGERA_HABIS, TIDAK_DIPERPANJANG, reminder_threshold, today,
+)
 
 router = APIRouter(prefix="/api/contracts", tags=["Kontrak"])
 
@@ -32,12 +35,13 @@ SORT_FIELDS = {
 # ---------------- Filter helper ----------------
 def status_condition(status: str):
     t, th = today(), reminder_threshold()
-    not_renew = Contract.diperpanjang.is_(False)
+    terbuka = Contract.status_proses.in_(PROSES_TERBUKA)
     return {
-        DIPERPANJANG: Contract.diperpanjang.is_(True),
-        BERAKHIR: and_(not_renew, Contract.tanggal_berakhir < t),
-        SEGERA_HABIS: and_(not_renew, Contract.tanggal_berakhir >= t, Contract.tanggal_berakhir <= th),
-        AKTIF: and_(not_renew, Contract.tanggal_berakhir > th),
+        DIPERPANJANG: Contract.status_proses == PROSES_DIPERPANJANG,
+        TIDAK_DIPERPANJANG: Contract.status_proses == PROSES_TIDAK,
+        BERAKHIR: and_(terbuka, Contract.tanggal_berakhir < t),
+        SEGERA_HABIS: and_(terbuka, Contract.tanggal_berakhir >= t, Contract.tanggal_berakhir <= th),
+        AKTIF: and_(terbuka, Contract.tanggal_berakhir > th),
     }.get(status)
 
 
@@ -45,7 +49,7 @@ class Filters:
     def __init__(
         self,
         q: str | None = Query(None, description="Cari nama kontrak / penyedia / nomor PKS"),
-        status: str | None = Query(None, description="aktif,segera_habis,berakhir,diperpanjang (boleh lebih dari satu, pisah koma)"),
+        status: str | None = Query(None, description="aktif,segera_habis,berakhir,diperpanjang,tidak_diperpanjang (boleh lebih dari satu, pisah koma)"),
         penyedia: str | None = None,
         tahun_pks: int | None = None,
         berakhir_dari: date | None = None,
@@ -126,9 +130,11 @@ def get_contract_or_404(db: Session, cid: int) -> Contract:
     return c
 
 
-def validate_dates(tanggal_pks: date, tanggal_berakhir: date):
+def validate_dates(tanggal_pks: date, tanggal_berakhir: date, tanggal_mulai: date | None = None):
     if tanggal_berakhir <= tanggal_pks:
-        raise HTTPException(422, "Tanggal berakhir harus setelah tanggal PKS")
+        raise HTTPException(422, "Tanggal akhir kontrak harus setelah tanggal PKS")
+    if tanggal_mulai and tanggal_berakhir <= tanggal_mulai:
+        raise HTTPException(422, "Tanggal akhir kontrak harus setelah tanggal awal kontrak")
 
 
 # ---------------- Endpoint ----------------
@@ -146,7 +152,7 @@ def list_contracts(
 
     base = f.base_conditions()
     counts = {}
-    for s in (AKTIF, SEGERA_HABIS, BERAKHIR, DIPERPANJANG):
+    for s in ALL_STATUS:
         counts[s] = db.scalar(select(func.count(Contract.id)).where(*base, status_condition(s))) or 0
     counts["semua"] = sum(counts.values())
 
@@ -201,28 +207,40 @@ def get_contract(cid: int, db: Session = Depends(get_db), _: Admin = Depends(get
     return ContractOut.from_model(get_contract_or_404(db, cid))
 
 
+def clean_text(v: str | None) -> str | None:
+    return (v or "").strip() or None
+
+
 @router.post("", response_model=ContractOut, status_code=201)
 async def create_contract(
     nama_kontrak: str = Form(..., min_length=2),
     penyedia: str = Form(..., min_length=2),
     nomor_pks: str = Form(..., min_length=1),
     tanggal_pks: date = Form(...),
+    tanggal_mulai: date | None = Form(None),
     tanggal_berakhir: date = Form(...),
     nilai_kontrak: int = Form(..., ge=0),
+    critical_pengesahan: str | None = Form(None),
+    denda: str | None = Form(None),
+    jaminan_kontrak: str | None = Form(None),
     keterangan: str | None = Form(None),
     file: UploadFile | None = File(None),
     db: Session = Depends(get_db),
     admin: Admin = Depends(get_current_admin),
 ):
-    validate_dates(tanggal_pks, tanggal_berakhir)
+    validate_dates(tanggal_pks, tanggal_berakhir, tanggal_mulai)
     c = Contract(
         nama_kontrak=nama_kontrak.strip(),
         penyedia=penyedia.strip(),
         nomor_pks=nomor_pks.strip(),
         tanggal_pks=tanggal_pks,
+        tanggal_mulai=tanggal_mulai,
         tanggal_berakhir=tanggal_berakhir,
         nilai_kontrak=nilai_kontrak,
-        keterangan=(keterangan or "").strip() or None,
+        critical_pengesahan=clean_text(critical_pengesahan),
+        denda=clean_text(denda),
+        jaminan_kontrak=clean_text(jaminan_kontrak),
+        keterangan=clean_text(keterangan),
         created_by_id=admin.id,
     )
     if file and file.filename:
@@ -244,21 +262,29 @@ async def update_contract(
     penyedia: str = Form(..., min_length=2),
     nomor_pks: str = Form(..., min_length=1),
     tanggal_pks: date = Form(...),
+    tanggal_mulai: date | None = Form(None),
     tanggal_berakhir: date = Form(...),
     nilai_kontrak: int = Form(..., ge=0),
+    critical_pengesahan: str | None = Form(None),
+    denda: str | None = Form(None),
+    jaminan_kontrak: str | None = Form(None),
     keterangan: str | None = Form(None),
     hapus_file: bool = Form(False),
     file: UploadFile | None = File(None),
     db: Session = Depends(get_db),
     _: Admin = Depends(get_current_admin),
 ):
-    validate_dates(tanggal_pks, tanggal_berakhir)
+    validate_dates(tanggal_pks, tanggal_berakhir, tanggal_mulai)
     c = get_contract_or_404(db, cid)
     if c.tanggal_berakhir != tanggal_berakhir:
         c.reminder_stage = 0  # tanggal berubah -> reminder dihitung ulang
     c.nama_kontrak, c.penyedia, c.nomor_pks = nama_kontrak.strip(), penyedia.strip(), nomor_pks.strip()
     c.tanggal_pks, c.tanggal_berakhir, c.nilai_kontrak = tanggal_pks, tanggal_berakhir, nilai_kontrak
-    c.keterangan = (keterangan or "").strip() or None
+    c.tanggal_mulai = tanggal_mulai
+    c.critical_pengesahan = clean_text(critical_pengesahan)
+    c.denda = clean_text(denda)
+    c.jaminan_kontrak = clean_text(jaminan_kontrak)
+    c.keterangan = clean_text(keterangan)
 
     old_file = None
     if file and file.filename:
@@ -276,10 +302,12 @@ async def update_contract(
     return ContractOut.from_model(get_contract_or_404(db, cid))
 
 
-@router.patch("/{cid}/perpanjang", response_model=ContractOut)
-def set_renewed(cid: int, body: RenewIn, db: Session = Depends(get_db), _: Admin = Depends(get_current_admin)):
+@router.patch("/{cid}/proses", response_model=ContractOut)
+def set_proses(cid: int, body: ProsesIn, db: Session = Depends(get_db), _: Admin = Depends(get_current_admin)):
+    """Ubah tahap proses perpanjangan untuk masa kontrak yang sedang berjalan."""
     c = get_contract_or_404(db, cid)
-    c.diperpanjang = body.diperpanjang
+    c.status_proses = body.status_proses
+    c.catatan_proses = clean_text(body.catatan_proses)
     db.commit()
     return ContractOut.from_model(get_contract_or_404(db, cid))
 
@@ -287,10 +315,87 @@ def set_renewed(cid: int, body: RenewIn, db: Session = Depends(get_db), _: Admin
 @router.delete("/{cid}", status_code=204)
 def delete_contract(cid: int, db: Session = Depends(get_db), _: Admin = Depends(get_current_admin)):
     c = get_contract_or_404(db, cid)
-    stored = c.file_path
+    stored = [c.file_path, *(a.file_path for a in c.addendums)]
     db.delete(c)
     db.commit()
+    for s in stored:
+        remove_file(s)
+
+
+# ---------------- Addendum (perpanjangan) ----------------
+@router.post("/{cid}/addendum", response_model=ContractOut, status_code=201)
+async def create_addendum(
+    cid: int,
+    nomor: str = Form(..., min_length=1, max_length=120),
+    tanggal: date = Form(...),
+    tanggal_akhir_baru: date = Form(...),
+    nilai_baru: int | None = Form(None, ge=0),
+    catatan: str | None = Form(None),
+    file: UploadFile | None = File(None),
+    db: Session = Depends(get_db),
+    admin: Admin = Depends(get_current_admin),
+):
+    """Catat perpanjangan: tanggal akhir (& nilai) kontrak diperbarui, reminder aktif lagi untuk masa baru."""
+    c = get_contract_or_404(db, cid)
+    if tanggal_akhir_baru <= c.tanggal_berakhir:
+        raise HTTPException(422, "Tanggal akhir baru harus setelah tanggal akhir kontrak saat ini")
+    a = Addendum(
+        urutan=max((x.urutan for x in c.addendums), default=0) + 1,
+        nomor=nomor.strip(),
+        tanggal=tanggal,
+        tanggal_akhir_lama=c.tanggal_berakhir,
+        tanggal_akhir_baru=tanggal_akhir_baru,
+        nilai_lama=c.nilai_kontrak,
+        nilai_baru=c.nilai_kontrak if nilai_baru is None else nilai_baru,
+        catatan=clean_text(catatan),
+        created_by_id=admin.id,
+    )
+    if file and file.filename:
+        a.file_name, a.file_path, a.file_size = await save_upload(file)
+    c.addendums.append(a)
+    c.tanggal_berakhir = a.tanggal_akhir_baru
+    c.nilai_kontrak = a.nilai_baru
+    c.reminder_stage = 0
+    c.status_proses, c.catatan_proses = PROSES_BELUM, None  # masa baru, proses mulai dari awal
+    db.commit()
+    return ContractOut.from_model(get_contract_or_404(db, cid))
+
+
+def get_addendum_or_404(c: Contract, aid: int) -> Addendum:
+    a = next((x for x in c.addendums if x.id == aid), None)
+    if not a:
+        raise HTTPException(404, "Addendum tidak ditemukan")
+    return a
+
+
+@router.delete("/{cid}/addendum/{aid}", response_model=ContractOut)
+def delete_addendum(cid: int, aid: int, db: Session = Depends(get_db), _: Admin = Depends(get_current_admin)):
+    """Hapus addendum terakhir: tanggal akhir & nilai kontrak dikembalikan ke sebelum addendum."""
+    c = get_contract_or_404(db, cid)
+    a = get_addendum_or_404(c, aid)
+    if a.urutan != max(x.urutan for x in c.addendums):
+        raise HTTPException(409, "Hanya addendum terakhir yang bisa dihapus")
+    c.tanggal_berakhir, c.nilai_kontrak, c.reminder_stage = a.tanggal_akhir_lama, a.nilai_lama, 0
+    stored = a.file_path
+    c.addendums.remove(a)
+    db.commit()
     remove_file(stored)
+    return ContractOut.from_model(get_contract_or_404(db, cid))
+
+
+@router.get("/{cid}/addendum/{aid}/file")
+def download_addendum_file(cid: int, aid: int, inline: bool = True, db: Session = Depends(get_db),
+                           _: Admin = Depends(get_current_admin)):
+    a = get_addendum_or_404(get_contract_or_404(db, cid), aid)
+    if not a.file_path or not (settings.UPLOAD_DIR / a.file_path).is_file():
+        raise HTTPException(404, "File addendum tidak tersedia")
+    media = mimetypes.guess_type(a.file_name or a.file_path)[0] or "application/octet-stream"
+    return FileResponse(
+        settings.UPLOAD_DIR / a.file_path,
+        media_type=media,
+        filename=a.file_name,
+        content_disposition_type="inline" if inline else "attachment",
+    )
 
 
 @router.get("/{cid}/file")

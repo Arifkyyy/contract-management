@@ -33,6 +33,8 @@ export default {
           endBg: 'rgba(242,119,125,.13)',
           renew: '#86A8F5',
           renewBg: 'rgba(134,168,245,.13)',
+          off: '#A3ACBD',
+          offBg: 'rgba(163,172,189,.13)',
         },
         brand: { green: '#1D7948', yellow: '#F2C12D', orange: '#CA7F2C' },
       },

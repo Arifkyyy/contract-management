@@ -19,7 +19,7 @@ from ..config import settings
 from ..database import SessionLocal
 from ..models import Admin, Contract, ReminderLog
 from .exporter import rupiah, tgl
-from .status import reminder_threshold, sisa_text, today
+from .status import PROSES_TERBUKA, reminder_threshold, sisa_text, today
 
 log = logging.getLogger("reminder")
 
@@ -38,7 +38,7 @@ def contracts_to_remind(db: Session, force: bool = False) -> list[tuple[Contract
     t, th = today(), reminder_threshold()
     rows = db.scalars(
         select(Contract)
-        .where(Contract.diperpanjang.is_(False), Contract.tanggal_berakhir >= t, Contract.tanggal_berakhir <= th)
+        .where(Contract.status_proses.in_(PROSES_TERBUKA), Contract.tanggal_berakhir >= t, Contract.tanggal_berakhir <= th)
         .order_by(Contract.tanggal_berakhir)
     ).all()
     result = []

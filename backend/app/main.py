@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import select
+from sqlalchemy import inspect, select, text
 
 from .auth import hash_password
 from .config import settings
@@ -21,8 +21,33 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [%(nam
 log = logging.getLogger("app")
 
 
+# Kolom yang ditambahkan setelah rilis awal: create_all() tidak menambah kolom ke tabel lama,
+# jadi tambahkan manual kalau belum ada.
+NEW_CONTRACT_COLUMNS = {
+    "tanggal_mulai": "DATE",
+    "status_proses": "VARCHAR(30) NOT NULL DEFAULT 'belum'",
+    "catatan_proses": "TEXT",
+    "critical_pengesahan": "TEXT",
+    "denda": "TEXT",
+    "jaminan_kontrak": "TEXT",
+}
+
+
+def migrate_columns():
+    existing = {c["name"] for c in inspect(engine).get_columns("contracts")}
+    with engine.begin() as conn:
+        for col, typ in NEW_CONTRACT_COLUMNS.items():
+            if col not in existing:
+                conn.execute(text(f"ALTER TABLE contracts ADD COLUMN {col} {typ}"))
+                log.info("Kolom baru ditambahkan: contracts.%s", col)
+                if col == "status_proses":
+                    # Kontrak yang dulu ditandai "sudah diperpanjang" tetap berstatus Diperpanjang
+                    conn.execute(text("UPDATE contracts SET status_proses = 'diperpanjang' WHERE diperpanjang = :t"), {"t": True})
+
+
 def init_db():
     Base.metadata.create_all(engine)
+    migrate_columns()
     with SessionLocal() as db:
         if not db.scalar(select(Admin.id).limit(1)):
             db.add(Admin(

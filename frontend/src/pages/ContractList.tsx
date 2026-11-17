@@ -13,7 +13,7 @@ import { api, downloadBlob, errMsg } from '../lib/api'
 import { rupiah, rupiahCompact, tanggal } from '../lib/format'
 import type { Contract, ContractList as CL, Status } from '../lib/types'
 
-const STATUSES: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang']
+const STATUSES: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang', 'tidak_diperpanjang']
 const SORTS = [
   { v: 'tanggal_berakhir:asc', l: 'Berakhir paling dekat' },
   { v: 'tanggal_berakhir:desc', l: 'Berakhir paling jauh' },
@@ -204,7 +204,7 @@ export default function ContractList() {
             </select>
           </div>
           <div className="sm:col-span-2">
-            <p className="label">Tanggal berakhir</p>
+            <p className="label">Tanggal akhir kontrak</p>
             <div className="flex items-center gap-2">
               <input type="date" className="input" aria-label="Berakhir dari" value={sp.get('berakhir_dari') ?? ''} onChange={(e) => update({ berakhir_dari: e.target.value })} />
               <span className="text-ink-faint">–</span>
@@ -310,7 +310,10 @@ export default function ContractList() {
                         <p className={clsx('mb-1.5 whitespace-nowrap text-xs font-semibold', c.status === 'segera_habis' ? 'text-status-warn' : c.status === 'berakhir' ? 'text-status-end' : 'text-ink-soft')}>{c.sisa_text}</p>
                         <TimeBar progress={c.progress} status={c.status} />
                       </td>
-                      <td className="px-4 py-4"><StatusBadge status={c.status} /></td>
+                      <td className="px-4 py-4">
+                        <StatusBadge status={c.status} />
+                        <RowMeta c={c} />
+                      </td>
                       <td className="py-4 pl-2 pr-4" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-0.5 opacity-60 transition group-hover:opacity-100">
                           <Link to={`/kontrak/${c.id}`} className="rounded-lg p-2 text-ink-muted hover:bg-white/[.04] hover:text-ink" title="Detail"><Eye className="h-4 w-4" /></Link>
@@ -334,7 +337,7 @@ export default function ContractList() {
                         <p className="font-semibold text-ink">{c.nama_kontrak}</p>
                         <p className="text-xs text-ink-muted">{c.penyedia}</p>
                       </div>
-                      <StatusBadge status={c.status} />
+                      <div className="shrink-0 text-right"><StatusBadge status={c.status} /><RowMeta c={c} /></div>
                     </div>
                     <div className="flex justify-between text-xs text-ink-soft">
                       <span>Berakhir {tanggal(c.tanggal_berakhir, true)}</span>
@@ -383,4 +386,13 @@ function MoneyInput({ value, onCommit, placeholder }: { value: string; onCommit:
       onBlur={() => v !== value && onCommit(v)}
       onKeyDown={(e) => e.key === 'Enter' && onCommit(v)} />
   )
+}
+
+/** Info kecil di bawah badge: tahap proses perpanjangan & jumlah addendum. */
+function RowMeta({ c }: { c: Contract }) {
+  const parts: string[] = []
+  if (c.status_proses === 'proses') parts.push('Sedang diproses')
+  if (c.addendum.length) parts.push(`Addendum ${c.addendum.length}×`)
+  if (!parts.length) return null
+  return <p className={clsx('mt-1 whitespace-nowrap text-[11px]', c.status_proses === 'proses' ? 'text-champagne' : 'text-ink-faint')}>{parts.join(' · ')}</p>
 }

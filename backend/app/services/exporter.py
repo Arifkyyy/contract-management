@@ -28,7 +28,7 @@ def rupiah(n: int) -> str:
     return "Rp " + f"{n:,}".replace(",", ".")
 
 
-HEADERS = ["No", "Nama Kontrak", "Penyedia", "Nomor PKS", "Tanggal PKS", "Tanggal Berakhir", "Nilai Kontrak", "Sisa Kontrak", "Status"]
+HEADERS = ["No", "Nama Kontrak", "Penyedia", "Nomor PKS", "Tanggal PKS", "Tanggal Awal Kontrak", "Tanggal Akhir Kontrak", "Nilai Kontrak", "Sisa Kontrak", "Status"]
 
 
 def to_xlsx(items) -> BytesIO:
@@ -36,10 +36,10 @@ def to_xlsx(items) -> BytesIO:
     ws = wb.active
     ws.title = "Daftar Kontrak"
 
-    ws.merge_cells("A1:I1")
+    ws.merge_cells("A1:J1")
     ws["A1"] = "DAFTAR KONTRAK"
     ws["A1"].font = Font(bold=True, size=14, color=MIDNIGHT)
-    ws.merge_cells("A2:I2")
+    ws.merge_cells("A2:J2")
     ws["A2"] = f"Dicetak {tgl(today())} · {len(items)} kontrak"
     ws["A2"].font = Font(size=10, color="64748B")
 
@@ -53,29 +53,29 @@ def to_xlsx(items) -> BytesIO:
     ws.row_dimensions[4].height = 24
 
     for r, c in enumerate(items, 5):
-        row = [r - 4, c.nama_kontrak, c.penyedia, c.nomor_pks, c.tanggal_pks, c.tanggal_berakhir, c.nilai_kontrak, c.sisa_text, c.status_label]
+        row = [r - 4, c.nama_kontrak, c.penyedia, c.nomor_pks, c.tanggal_pks, c.tanggal_mulai, c.tanggal_berakhir, c.nilai_kontrak, c.sisa_text, c.status_label]
         for col, v in enumerate(row, 1):
             cell = ws.cell(row=r, column=col, value=v)
             cell.border = Border(bottom=thin)
-            if col in (5, 6):
+            if col in (5, 6, 7):
                 cell.number_format = "DD MMM YYYY"
-            if col == 7:
+            if col == 8:
                 cell.number_format = '"Rp" #,##0'
         if (r - 5) % 2:
-            for col in range(1, 10):
+            for col in range(1, 11):
                 ws.cell(row=r, column=col).fill = PatternFill("solid", fgColor=IVORY)
 
     total_row = len(items) + 5
-    ws.cell(row=total_row, column=6, value="Total").font = Font(bold=True)
-    tc = ws.cell(row=total_row, column=7, value=f"=SUM(G5:G{total_row - 1})" if items else 0)
+    ws.cell(row=total_row, column=7, value="Total").font = Font(bold=True)
+    tc = ws.cell(row=total_row, column=8, value=f"=SUM(H5:H{total_row - 1})" if items else 0)
     tc.font = Font(bold=True)
     tc.number_format = '"Rp" #,##0'
 
-    widths = [6, 38, 28, 24, 15, 17, 20, 20, 15]
+    widths = [6, 38, 28, 24, 15, 20, 21, 20, 20, 15]
     for i, w in enumerate(widths, 1):
         ws.column_dimensions[get_column_letter(i)].width = w
     ws.freeze_panes = "A5"
-    ws.auto_filter.ref = f"A4:I{max(4, total_row - 1)}"
+    ws.auto_filter.ref = f"A4:J{max(4, total_row - 1)}"
 
     buf = BytesIO()
     wb.save(buf)
@@ -97,20 +97,21 @@ def to_pdf(items, dicetak_oleh: str) -> BytesIO:
         Paragraph(f"Dicetak {tgl(today())} oleh {dicetak_oleh} · {len(items)} kontrak · Total nilai {rupiah(total)}", sub),
         Spacer(1, 8 * mm),
     ]
-    data = [HEADERS]
+    head = ParagraphStyle("h", fontName="Helvetica-Bold", fontSize=8, leading=10, textColor=colors.HexColor("#" + CHAMPAGNE))
+    data = [[Paragraph(h, head) for h in HEADERS]]
     for i, c in enumerate(items, 1):
         data.append([
             str(i), Paragraph(c.nama_kontrak, cell), Paragraph(c.penyedia, cell), Paragraph(c.nomor_pks, cell),
-            tgl(c.tanggal_pks), tgl(c.tanggal_berakhir), rupiah(c.nilai_kontrak), c.sisa_text, c.status_label,
+            tgl(c.tanggal_pks), tgl(c.tanggal_mulai) if c.tanggal_mulai else "-", tgl(c.tanggal_berakhir), rupiah(c.nilai_kontrak), c.sisa_text, c.status_label,
         ])
-    t = Table(data, repeatRows=1, colWidths=[9 * mm, 62 * mm, 45 * mm, 38 * mm, 22 * mm, 24 * mm, 32 * mm, 26 * mm, 22 * mm])
+    t = Table(data, repeatRows=1, colWidths=[9 * mm, 46 * mm, 36 * mm, 32 * mm, 22 * mm, 24 * mm, 24 * mm, 30 * mm, 24 * mm, 22 * mm])
     style = [
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#" + MIDNIGHT)),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.HexColor("#" + CHAMPAGNE)),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("FONTSIZE", (0, 0), (-1, -1), 8),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("ALIGN", (6, 1), (6, -1), "RIGHT"),
+        ("ALIGN", (7, 1), (7, -1), "RIGHT"),
         ("TOPPADDING", (0, 0), (-1, -1), 5),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
         ("LINEBELOW", (0, 1), (-1, -1), 0.4, colors.HexColor("#E2E8F0")),
@@ -119,7 +120,7 @@ def to_pdf(items, dicetak_oleh: str) -> BytesIO:
     for i, c in enumerate(items, 1):
         if i % 2 == 0:
             style.append(("BACKGROUND", (0, i), (-1, i), colors.HexColor("#" + IVORY)))
-        style.append(("TEXTCOLOR", (8, i), (8, i), colors.HexColor(status_color.get(c.status_label, "#0F172A"))))
+        style.append(("TEXTCOLOR", (9, i), (9, i), colors.HexColor(status_color.get(c.status_label, "#0F172A"))))
     t.setStyle(TableStyle(style))
     story.append(t)
     doc.build(story)

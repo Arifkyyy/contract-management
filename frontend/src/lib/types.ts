@@ -1,4 +1,22 @@
-export type Status = 'aktif' | 'segera_habis' | 'berakhir' | 'diperpanjang'
+export type Status = 'aktif' | 'segera_habis' | 'berakhir' | 'diperpanjang' | 'tidak_diperpanjang'
+export type StatusProses = 'belum' | 'proses' | 'diperpanjang' | 'tidak_diperpanjang'
+
+export interface Addendum {
+  id: number
+  urutan: number
+  nomor: string
+  tanggal: string
+  tanggal_akhir_lama: string
+  tanggal_akhir_baru: string
+  nilai_lama: number
+  nilai_baru: number
+  catatan: string | null
+  file_name: string | null
+  file_size: number | null
+  has_file: boolean
+  created_by: string | null
+  created_at: string | null
+}
 
 export interface Admin {
   id: number
@@ -16,13 +34,20 @@ export interface Contract {
   penyedia: string
   nomor_pks: string
   tanggal_pks: string
+  tanggal_mulai: string | null
   tanggal_berakhir: string
   nilai_kontrak: number
+  critical_pengesahan: string | null
+  denda: string | null
+  jaminan_kontrak: string | null
   keterangan: string | null
   file_name: string | null
   file_size: number | null
   has_file: boolean
-  diperpanjang: boolean
+  status_proses: StatusProses
+  status_proses_label: string
+  catatan_proses: string | null
+  addendum: Addendum[]
   status: Status
   status_label: string
   sisa_hari: number
@@ -49,6 +74,7 @@ export interface Dashboard {
   counts: Record<Status, number>
   nilai_per_status: Record<Status, number>
   segera_habis: Contract[]
+  segera_proses: { belum: number; proses: number }
   terbaru: Contract[]
   timeline: { bulan: string; tahun: number; bulan_ke: number; jumlah: number; nilai: number; masa_reminder: boolean }[]
   top_penyedia: { penyedia: string; jumlah: number; nilai: number }[]

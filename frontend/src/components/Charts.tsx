@@ -90,11 +90,11 @@ export function ExpiryTimeline({ data }: { data: Dashboard['timeline'] }) {
 
 /** Donut komposisi status kontrak. Total di tengah, label + jumlah di samping. */
 const DONUT_COLOR: Record<Status, string> = {
-  aktif: '#5FD3A2', segera_habis: '#F2B657', berakhir: '#F2777D', diperpanjang: '#86A8F5',
+  aktif: '#5FD3A2', segera_habis: '#F2B657', berakhir: '#F2777D', diperpanjang: '#86A8F5', tidak_diperpanjang: '#A3ACBD',
 }
 export function StatusDonut({ counts }: { counts: Record<Status, number> }) {
   const root = useRef<HTMLDivElement>(null)
-  const order: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang']
+  const order: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang', 'tidak_diperpanjang']
   const sum = order.reduce((a, s) => a + counts[s], 0)
   const total = sum || 1
   const R = 70

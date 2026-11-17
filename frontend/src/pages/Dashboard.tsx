@@ -14,7 +14,7 @@ import type { Dashboard as D, Status } from '../lib/types'
 import { useLite } from '../lib/perf'
 
 const HeroObject = lazy(() => import('../components/HeroObject'))
-const STATUS_ORDER: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang']
+const STATUS_ORDER: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang', 'tidak_diperpanjang']
 
 function CardHead({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
   return (
@@ -118,7 +118,7 @@ export default function Dashboard() {
           </div>
 
           {/* Baris KPI ala kaca */}
-          <div className="relative mt-auto grid grid-cols-2 gap-2 rounded-2xl border border-white/[.08] bg-white/[.04] p-2 backdrop-blur-xl sm:grid-cols-4">
+          <div className="relative mt-auto grid grid-cols-2 gap-2 rounded-2xl border border-white/[.08] bg-white/[.04] p-2 backdrop-blur-xl sm:grid-cols-3 xl:grid-cols-5">
             {STATUS_ORDER.map((s) => {
               const M = statusMeta[s]
               const Icon = M.icon
@@ -163,7 +163,11 @@ export default function Dashboard() {
               <span className="absolute inset-0 animate-ping rounded-xl bg-status-warn/40" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-ink">{nSegera} kontrak akan berakhir dalam 3 bulan</p>
+              <p className="font-semibold text-ink">{nSegera} kontrak akan berakhir dalam 3 bulan
+                <span className="ml-2 text-sm font-normal text-ink-muted">
+                  · {data.segera_proses.belum} belum diproses · {data.segera_proses.proses} sedang diproses
+                </span>
+              </p>
               <p className="mt-0.5 truncate text-sm text-ink-muted">
                 Terdekat: <span className="text-ink-soft">{data.segera_habis[0]?.nama_kontrak}</span> — sisa {data.segera_habis[0]?.sisa_text}
               </p>
