@@ -155,7 +155,7 @@ export default function ContractList() {
           {q && <button onClick={() => setQ('')} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-ink-faint hover:text-ink" aria-label="Hapus pencarian"><X className="h-4 w-4" /></button>}
         </div>
         <button onClick={() => setAdvOpen((o) => !o)}
-          className={clsx('btn h-12 rounded-2xl border bg-white/[.04]', advOpen || activePills.some((p) => p.key !== 'q') ? 'border-champagne text-champagne-700' : 'border-white/[.07] text-ink hover:border-champagne/60')}>
+          className={clsx('btn h-12 rounded-2xl border bg-fg/[.04]', advOpen || activePills.some((p) => p.key !== 'q') ? 'border-champagne text-champagne-700' : 'border-fg/[.07] text-ink hover:border-champagne/60')}>
           <Filter className="h-4 w-4" /> Filter
           {activePills.filter((p) => p.key !== 'q').length > 0 && (
             <span className="grid h-5 min-w-5 place-items-center rounded-full bg-champagne px-1 text-[10px] font-bold text-midnight">{activePills.filter((p) => p.key !== 'q').length}</span>
@@ -172,11 +172,11 @@ export default function ContractList() {
             <Download className="h-4 w-4" /> {exporting ? 'Menyiapkan…' : 'Export'}
           </button>
           {exportOpen && (
-            <div className="absolute right-0 top-14 z-30 w-56 rounded-2xl border border-white/[.07] bg-white/[.04] p-1.5 shadow-lift" onMouseLeave={() => setExportOpen(false)}>
-              <button onClick={() => doExport('xlsx')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-white/[.05]">
+            <div className="absolute right-0 top-14 z-30 w-56 rounded-2xl border border-fg/[.07] bg-fg/[.04] p-1.5 shadow-lift" onMouseLeave={() => setExportOpen(false)}>
+              <button onClick={() => doExport('xlsx')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-fg/[.05]">
                 <FileSpreadsheet className="h-4 w-4 text-status-aktif" /> Excel (.xlsx)
               </button>
-              <button onClick={() => doExport('pdf')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-white/[.05]">
+              <button onClick={() => doExport('pdf')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-fg/[.05]">
                 <FileText className="h-4 w-4 text-status-end" /> PDF
               </button>
               <p className="px-3 pb-1.5 pt-1 text-[11px] text-ink-faint">Mengikuti filter yang aktif</p>
@@ -228,7 +228,7 @@ export default function ContractList() {
             </select>
           </div>
           <div className="flex items-end">
-            <button onClick={resetAll} className="btn-ghost w-full border border-white/[.07]">Reset semua filter</button>
+            <button onClick={resetAll} className="btn-ghost w-full border border-fg/[.07]">Reset semua filter</button>
           </div>
         </div>
       )}
@@ -261,7 +261,7 @@ export default function ContractList() {
 
       {/* ---------- Tabel ---------- */}
       <div className="reveal card overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[.07] px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-fg/[.07] px-6 py-4">
           <p className="text-sm text-ink-muted">
             <span className="font-semibold text-ink">{data?.total ?? 0}</span> kontrak
             {data && data.total > 0 && <> · total nilai <span className="font-semibold text-ink">{rupiahCompact(data.total_nilai)}</span></>}
@@ -291,9 +291,9 @@ export default function ContractList() {
                     <th className="px-4 py-3.5" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[.06]">
+                <tbody className="divide-y divide-fg/[.06]">
                   {data.items.map((c) => (
-                    <tr key={c.id} onClick={() => nav(`/kontrak/${c.id}`)} className="row group cursor-pointer transition hover:bg-white/[.03]">
+                    <tr key={c.id} onClick={() => nav(`/kontrak/${c.id}`)} className="row group cursor-pointer transition hover:bg-fg/[.03]">
                       <td className="max-w-[280px] px-6 py-4">
                         <p className="truncate font-semibold text-ink group-hover:text-champagne-700">{c.nama_kontrak}</p>
                         <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-ink-muted">
@@ -316,8 +316,8 @@ export default function ContractList() {
                       </td>
                       <td className="py-4 pl-2 pr-4" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-0.5 opacity-60 transition group-hover:opacity-100">
-                          <Link to={`/kontrak/${c.id}`} className="rounded-lg p-2 text-ink-muted hover:bg-white/[.04] hover:text-ink" title="Detail"><Eye className="h-4 w-4" /></Link>
-                          <Link to={`/kontrak/${c.id}/edit`} className="rounded-lg p-2 text-ink-muted hover:bg-white/[.04] hover:text-ink" title="Edit"><Pencil className="h-4 w-4" /></Link>
+                          <Link to={`/kontrak/${c.id}`} className="rounded-lg p-2 text-ink-muted hover:bg-fg/[.04] hover:text-ink" title="Detail"><Eye className="h-4 w-4" /></Link>
+                          <Link to={`/kontrak/${c.id}/edit`} className="rounded-lg p-2 text-ink-muted hover:bg-fg/[.04] hover:text-ink" title="Edit"><Pencil className="h-4 w-4" /></Link>
                           <button onClick={() => setToDelete(c)} className="rounded-lg p-2 text-ink-muted hover:bg-status-endBg hover:text-status-end" title="Hapus"><Trash2 className="h-4 w-4" /></button>
                         </div>
                       </td>
@@ -328,7 +328,7 @@ export default function ContractList() {
             </div>
 
             {/* Mobile */}
-            <ul className="divide-y divide-white/[.06] md:hidden">
+            <ul className="divide-y divide-fg/[.06] md:hidden">
               {data.items.map((c) => (
                 <li key={c.id} className="row">
                   <Link to={`/kontrak/${c.id}`} className="block space-y-3 px-5 py-4">
@@ -351,7 +351,7 @@ export default function ContractList() {
             </ul>
 
             {/* Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[.07] px-6 py-4 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-fg/[.07] px-6 py-4 text-sm">
               <label className="flex items-center gap-2 text-ink-muted">
                 Tampilkan
                 <select value={pageSize} onChange={(e) => update({ page_size: e.target.value })} className="input w-auto cursor-pointer py-1.5">
@@ -361,8 +361,8 @@ export default function ContractList() {
               </label>
               <div className="flex items-center gap-2">
                 <span className="text-ink-muted">Halaman <span className="font-semibold text-ink">{page}</span> dari {totalPages}</span>
-                <button disabled={page <= 1} onClick={() => update({ page: String(page - 1) }, false)} className="btn-ghost border border-white/[.07] bg-white/[.04] px-2.5" aria-label="Sebelumnya"><ChevronLeft className="h-4 w-4" /></button>
-                <button disabled={page >= totalPages} onClick={() => update({ page: String(page + 1) }, false)} className="btn-ghost border border-white/[.07] bg-white/[.04] px-2.5" aria-label="Berikutnya"><ChevronRight className="h-4 w-4" /></button>
+                <button disabled={page <= 1} onClick={() => update({ page: String(page - 1) }, false)} className="btn-ghost border border-fg/[.07] bg-fg/[.04] px-2.5" aria-label="Sebelumnya"><ChevronLeft className="h-4 w-4" /></button>
+                <button disabled={page >= totalPages} onClick={() => update({ page: String(page + 1) }, false)} className="btn-ghost border border-fg/[.07] bg-fg/[.04] px-2.5" aria-label="Berikutnya"><ChevronRight className="h-4 w-4" /></button>
               </div>
             </div>
           </>

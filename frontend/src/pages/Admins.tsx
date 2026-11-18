@@ -95,33 +95,33 @@ export default function Admins() {
           </div>
           <button onClick={() => setAddOpen(true)} className="btn-primary"><Plus className="h-4 w-4" /> Tambah admin</button>
         </div>
-        <ul className="divide-y divide-white/[.06] border-t border-white/[.07]">
+        <ul className="divide-y divide-fg/[.06] border-t border-fg/[.07]">
           {list.map((a) => {
             const self = a.id === me?.id
             return (
               <li key={a.id} className={clsx('flex flex-wrap items-center gap-4 px-7 py-4', !a.is_active && 'opacity-60')}>
-                <span className={clsx('grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold', a.is_active ? 'bg-gradient-to-br from-champagne/30 to-champagne/5 border border-champagne/30 text-champagne' : 'bg-white/[.08] text-ink-muted')}>
+                <span className={clsx('grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold', a.is_active ? 'bg-gradient-to-br from-champagne/30 to-champagne/5 border border-champagne/30 text-champagne' : 'bg-fg/[.08] text-ink-muted')}>
                   {initials(a.nama)}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 truncate font-semibold text-ink">
                     {a.nama}
                     {self && <span className="rounded-full bg-champagne/[.14] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-champagne-700">Anda</span>}
-                    {!a.is_active && <span className="rounded-full bg-white/[.08] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-muted">Nonaktif</span>}
+                    {!a.is_active && <span className="rounded-full bg-fg/[.08] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-muted">Nonaktif</span>}
                   </p>
                   <p className="truncate text-xs text-ink-muted">{a.email} · login {a.last_login ? waktuRelatif(a.last_login) : 'belum pernah'}</p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button onClick={() => patch(a, { terima_email: !a.terima_email }, a.terima_email ? 'Email reminder dimatikan' : 'Email reminder dinyalakan')}
-                    className={clsx('rounded-lg p-2 transition', a.terima_email ? 'text-status-aktif hover:bg-status-aktifBg' : 'text-ink-faint hover:bg-white/[.05]')}
+                    className={clsx('rounded-lg p-2 transition', a.terima_email ? 'text-status-aktif hover:bg-status-aktifBg' : 'text-ink-faint hover:bg-fg/[.05]')}
                     title={a.terima_email ? 'Menerima email reminder (klik untuk matikan)' : 'Tidak menerima email (klik untuk nyalakan)'}>
                     {a.terima_email ? <Mail className="h-4 w-4" /> : <MailX className="h-4 w-4" />}
                   </button>
-                  <button onClick={() => setResetFor(a)} className="rounded-lg p-2 text-ink-muted hover:bg-white/[.05] hover:text-ink" title="Reset password"><KeyRound className="h-4 w-4" /></button>
+                  <button onClick={() => setResetFor(a)} className="rounded-lg p-2 text-ink-muted hover:bg-fg/[.05] hover:text-ink" title="Reset password"><KeyRound className="h-4 w-4" /></button>
                   {!self && (
                     <>
                       <button onClick={() => patch(a, { is_active: !a.is_active }, a.is_active ? 'Admin dinonaktifkan' : 'Admin diaktifkan')}
-                        className="rounded-lg p-2 text-ink-muted hover:bg-white/[.05] hover:text-ink" title={a.is_active ? 'Nonaktifkan' : 'Aktifkan'}>
+                        className="rounded-lg p-2 text-ink-muted hover:bg-fg/[.05] hover:text-ink" title={a.is_active ? 'Nonaktifkan' : 'Aktifkan'}>
                         {a.is_active ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
                       </button>
                       <button onClick={() => setDelFor(a)} className="rounded-lg p-2 text-ink-muted hover:bg-status-endBg hover:text-status-end" title="Hapus"><Trash2 className="h-4 w-4" /></button>
@@ -160,7 +160,7 @@ export default function Admins() {
                 {sending ? <Spinner /> : <Send className="h-4 w-4" />} Kirim reminder sekarang
               </button>
             </>
-          ) : <Skeleton className="mt-4 h-40 bg-white/10" />}
+          ) : <Skeleton className="mt-4 h-40 bg-fg/10" />}
         </section>
 
         <section className="reveal card p-6">

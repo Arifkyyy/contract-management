@@ -11,6 +11,7 @@ import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import { initPerf } from './lib/perf'
+import './lib/theme'
 
 gsap.registerPlugin(useGSAP)
 gsap.defaults({ overwrite: 'auto' })

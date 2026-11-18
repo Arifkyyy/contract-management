@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { BellRing, ChevronDown, Gauge, FilePlus2, LayoutDashboard, LogOut, Menu, ScrollText, UserCog, UsersRound, X } from 'lucide-react'
 import clsx from 'clsx'
-import { Logo } from './ui'
+import { Logo, ThemeToggle } from './ui'
 import Ambient from './Ambient'
 import NotificationBell from './NotificationBell'
 import ProfileModal from './ProfileModal'
@@ -44,8 +44,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   }, [pathname])
 
   return (
-    <div className="noise relative flex h-full flex-col overflow-hidden rounded-[26px] border border-white/[.07] px-4 py-6 shadow-lift backdrop-blur-2xl"
-      style={{ background: 'linear-gradient(180deg, rgba(20,29,51,.78) 0%, rgba(10,16,30,.82) 100%)' }}>
+    <div className="noise relative flex h-full flex-col overflow-hidden sidebar-surface rounded-[26px] border border-fg/[.07] px-4 py-6 shadow-lift backdrop-blur-2xl">
       <div className="pointer-events-none absolute -left-20 -top-24 h-64 w-64 rounded-full bg-champagne/20 blur-3xl" />
       <div className="relative px-2"><Logo /></div>
       <div className="hairline relative mx-2 mt-6" />
@@ -65,7 +64,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               const on = isActive || (to === '/kontrak' && /^\/kontrak\/\d+/.test(pathname))
               return (
                 <>
-                  <span className={clsx('grid h-8 w-8 place-items-center rounded-xl transition', on ? 'bg-champagne text-midnight shadow-glow' : 'bg-white/[.04] group-hover:bg-white/[.08]')}>
+                  <span className={clsx('grid h-8 w-8 place-items-center rounded-xl transition', on ? 'bg-champagne text-midnight shadow-glow' : 'bg-fg/[.04] group-hover:bg-fg/[.08]')}>
                     <Icon className="h-[17px] w-[17px]" strokeWidth={1.9} />
                   </span>
                   {label}
@@ -77,7 +76,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="relative mt-auto overflow-hidden rounded-2xl border border-champagne/20 p-5"
-        style={{ background: 'radial-gradient(120% 100% at 0% 0%, rgba(212,180,131,.22), transparent 60%), rgba(255,255,255,.03)' }}>
+        style={{ background: 'radial-gradient(120% 100% at 0% 0%, rgba(212,180,131,.22), transparent 60%), rgb(var(--fg) / .03)' }}>
         <span className="grid h-9 w-9 place-items-center rounded-xl bg-champagne/15 text-champagne"><BellRing className="h-4 w-4" /></span>
         <p className="mt-3 text-sm font-semibold text-ink">Reminder otomatis</p>
         <p className="mt-1 text-xs leading-relaxed text-ink-muted">Kontrak sisa ≤ 3 bulan tampil di dashboard & dikirim ke email admin tiap pagi.</p>
@@ -135,8 +134,8 @@ export default function Layout() {
 
       <div className="relative z-10 lg:pl-[276px]">
         <header className="sticky top-0 z-30 px-4 pt-4 sm:px-6">
-          <div className="mx-auto flex h-[72px] max-w-[1400px] items-center gap-4 rounded-[22px] border border-white/[.07] bg-[#0B1222]/70 px-4 shadow-soft backdrop-blur-2xl sm:px-6">
-            <button onClick={() => setMobileOpen(true)} className="rounded-xl border border-white/[.08] bg-white/[.04] p-2.5 lg:hidden" aria-label="Buka menu">
+          <div className="mx-auto flex h-[72px] max-w-[1400px] items-center gap-4 rounded-[22px] border border-fg/[.07] bg-panel/[.88] px-4 shadow-soft backdrop-blur-2xl sm:px-6">
+            <button onClick={() => setMobileOpen(true)} className="rounded-xl border border-fg/[.08] bg-fg/[.04] p-2.5 lg:hidden" aria-label="Buka menu">
               <Menu className="h-5 w-5" />
             </button>
             <div className="min-w-0">
@@ -145,10 +144,11 @@ export default function Layout() {
             </div>
 
             <div className="ml-auto flex items-center gap-3">
+              <ThemeToggle />
               <NotificationBell />
               <div ref={menuRef} className="relative">
                 <button onClick={() => setMenuOpen((o) => !o)}
-                  className="flex items-center gap-3 rounded-2xl border border-white/[.08] bg-white/[.04] py-1.5 pl-1.5 pr-3 transition hover:border-champagne/40">
+                  className="flex items-center gap-3 rounded-2xl border border-fg/[.08] bg-fg/[.04] py-1.5 pl-1.5 pr-3 transition hover:border-champagne/40">
                   <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-champagne-200 to-champagne-500 text-xs font-bold text-midnight">{initials(admin?.nama ?? '')}</span>
                   <span className="hidden text-left sm:block">
                     <span className="block max-w-[140px] truncate text-[13px] font-semibold leading-tight text-ink">{admin?.nama}</span>
@@ -157,16 +157,16 @@ export default function Layout() {
                   <ChevronDown className="h-4 w-4 text-ink-faint" />
                 </button>
                 {menuOpen && (
-                  <div className="absolute right-0 top-14 z-50 w-56 overflow-hidden rounded-2xl border border-white/[.08] bg-[#0E1526]/95 p-1.5 shadow-lift backdrop-blur-2xl">
+                  <div className="absolute right-0 top-14 z-50 w-56 overflow-hidden rounded-2xl border border-fg/[.08] bg-panel/95 p-1.5 shadow-lift backdrop-blur-2xl">
                     <button onClick={() => { setMenuOpen(false); setProfileOpen(true) }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink hover:bg-white/[.06]">
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink hover:bg-fg/[.06]">
                       <UserCog className="h-4 w-4 text-ink-muted" /> Profil & password
                     </button>
                     <button onClick={() => setLite(!lite)}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink hover:bg-white/[.06]">
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink hover:bg-fg/[.06]">
                       <Gauge className="h-4 w-4 text-ink-muted" />
                       <span className="flex-1 text-left">Mode ringan</span>
-                      <span className={clsx('relative h-5 w-9 rounded-full transition', lite ? 'bg-champagne' : 'bg-white/[.12]')}>
+                      <span className={clsx('relative h-5 w-9 rounded-full transition', lite ? 'bg-champagne' : 'bg-fg/[.12]')}>
                         <span className={clsx('absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all', lite ? 'left-[18px]' : 'left-0.5')} />
                       </span>
                     </button>

@@ -35,7 +35,7 @@ export function ExpiryTimeline({ data }: { data: Dashboard['timeline'] }) {
         </div>
         <div className="relative flex-1">
           <div className="absolute inset-x-0 bottom-7 top-0 flex flex-col justify-between">
-            {ticks.map((t) => <div key={t} className={clsx('h-px', t === 0 ? 'bg-white/[.12]' : 'bg-white/[.05]')} />)}
+            {ticks.map((t) => <div key={t} className={clsx('h-px', t === 0 ? 'bg-fg/[.12]' : 'bg-fg/[.05]')} />)}
           </div>
           <div className="absolute inset-0 flex items-stretch gap-2">
             {data.map((d, i) => {
@@ -46,7 +46,7 @@ export function ExpiryTimeline({ data }: { data: Dashboard['timeline'] }) {
                   onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
                   <div className="relative flex w-full flex-1 items-end justify-center">
                     {/* kolom latar tipis */}
-                    <div className="absolute inset-x-[18%] bottom-0 top-0 rounded-t-lg bg-white/[.025]" />
+                    <div className="absolute inset-x-[18%] bottom-0 top-0 rounded-t-lg bg-fg/[.025]" />
                     <div className={clsx('bar relative w-[64%] max-w-[22px] origin-bottom rounded-t-[6px] transition-[filter,opacity] duration-300',
                       hover !== null && hover !== i && 'opacity-45')}
                       style={{
@@ -63,7 +63,7 @@ export function ExpiryTimeline({ data }: { data: Dashboard['timeline'] }) {
                       <>
                         <div className="beam pointer-events-none absolute bottom-0 left-1/2 h-24 w-14 -translate-x-1/2 translate-y-full"
                           style={{ background: 'radial-gradient(50% 60% at 50% 0%, rgba(230,207,166,.55), transparent 70%)' }} />
-                        <div className={clsx('pointer-events-none absolute z-10 translate-y-1/2 rounded-xl border border-champagne/30 bg-[#0E1526]/95 px-3 py-2 text-xs shadow-lift backdrop-blur',
+                        <div className={clsx('pointer-events-none absolute z-10 translate-y-1/2 rounded-xl border border-champagne/30 bg-panel/95 px-3 py-2 text-xs shadow-lift backdrop-blur',
                           i > data.length / 2 ? 'right-[70%]' : 'left-[70%]')}
                           style={{ bottom: `${Math.min(h, 80)}%` }}>
                           <p className="whitespace-nowrap font-semibold text-champagne">{d.bulan}</p>
@@ -90,7 +90,7 @@ export function ExpiryTimeline({ data }: { data: Dashboard['timeline'] }) {
 
 /** Donut komposisi status kontrak. Total di tengah, label + jumlah di samping. */
 const DONUT_COLOR: Record<Status, string> = {
-  aktif: '#5FD3A2', segera_habis: '#F2B657', berakhir: '#F2777D', diperpanjang: '#86A8F5', tidak_diperpanjang: '#A3ACBD',
+  aktif: '--st-aktif', segera_habis: '--st-warn', berakhir: '--st-end', diperpanjang: '--st-renew', tidak_diperpanjang: '--st-off',
 }
 export function StatusDonut({ counts }: { counts: Record<Status, number> }) {
   const root = useRef<HTMLDivElement>(null)
@@ -119,11 +119,11 @@ export function StatusDonut({ counts }: { counts: Record<Status, number> }) {
       <div className="relative h-[180px] w-[180px] shrink-0">
         <div className="absolute inset-6 rounded-full bg-champagne/10 blur-2xl" />
         <svg viewBox="0 0 180 180" className="relative h-full w-full -rotate-90">
-          <circle cx="90" cy="90" r={R} fill="none" stroke="rgba(255,255,255,.05)" strokeWidth="16" />
+          <circle cx="90" cy="90" r={R} fill="none" style={{ stroke: 'rgb(var(--fg) / .06)' }} strokeWidth="16" />
           {segs.map(({ s, len, off }, i) => (
-            <circle key={s} cx="90" cy="90" r={R} fill="none" stroke={DONUT_COLOR[s]} strokeWidth="16"
+            <circle key={s} cx="90" cy="90" r={R} fill="none" strokeWidth="16"
               strokeLinecap="round" strokeDasharray={`${drawn ? len : 0} ${C}`} strokeDashoffset={-off}
-              style={{ filter: `drop-shadow(0 0 6px ${DONUT_COLOR[s]}66)`, transition: `stroke-dasharray 1.2s cubic-bezier(.22,1,.36,1) ${i * 0.12}s` }}>
+              style={{ stroke: `rgb(var(${DONUT_COLOR[s]}))`, filter: `drop-shadow(0 0 6px rgb(var(${DONUT_COLOR[s]}) / .4))`, transition: `stroke-dasharray 1.2s cubic-bezier(.22,1,.36,1) ${i * 0.12}s` }}>
               <title>{`${statusMeta[s].label}: ${counts[s]}`}</title>
             </circle>
           ))}
@@ -140,7 +140,7 @@ export function StatusDonut({ counts }: { counts: Record<Status, number> }) {
         {order.map((s) => (
           <li key={s} className="flex items-center justify-between gap-3 text-sm">
             <span className="flex items-center gap-2.5 text-ink-soft">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ background: DONUT_COLOR[s], boxShadow: `0 0 10px ${DONUT_COLOR[s]}` }} />
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: `rgb(var(${DONUT_COLOR[s]}))`, boxShadow: `0 0 10px rgb(var(${DONUT_COLOR[s]}) / .7)` }} />
               {statusMeta[s].label}
             </span>
             <span className="flex items-baseline gap-2">
@@ -172,7 +172,7 @@ export function TopVendors({ data }: { data: Dashboard['top_penyedia'] }) {
             </span>
             <span className="shrink-0 font-semibold text-ink tabular">{rupiahCompact(d.nilai)}</span>
           </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/[.05]">
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-fg/[.05]">
             <div className="hbar h-full origin-left rounded-full"
               style={{ width: `${(d.nilai / max) * 100}%`, background: 'linear-gradient(90deg, rgba(212,180,131,.35), #E6CFA6)', boxShadow: '0 0 12px rgba(212,180,131,.45)' }} />
           </div>

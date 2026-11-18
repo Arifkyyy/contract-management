@@ -16,13 +16,13 @@ function ToastItem({ t, onClose }: { t: Toast; onClose: () => void }) {
   const Icon = t.kind === 'success' ? CheckCircle2 : t.kind === 'error' ? XCircle : Info
   const tone = t.kind === 'success' ? 'text-status-aktif' : t.kind === 'error' ? 'text-status-end' : 'text-champagne-600'
   return (
-    <div ref={ref} role="status" className="pointer-events-auto flex w-[22rem] items-start gap-3 rounded-2xl border border-white/[.07] bg-panel/95 p-4 shadow-lift backdrop-blur">
+    <div ref={ref} role="status" className="pointer-events-auto flex w-[22rem] items-start gap-3 rounded-2xl border border-fg/[.07] bg-panel/95 p-4 shadow-lift backdrop-blur">
       <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${tone}`} />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-ink">{t.title}</p>
         {t.desc && <p className="mt-0.5 text-[13px] leading-relaxed text-ink-muted">{t.desc}</p>}
       </div>
-      <button onClick={onClose} className="rounded-lg p-1 text-ink-faint hover:bg-white/[.06] hover:text-ink" aria-label="Tutup">
+      <button onClick={onClose} className="rounded-lg p-1 text-ink-faint hover:bg-fg/[.06] hover:text-ink" aria-label="Tutup">
         <X className="h-4 w-4" />
       </button>
     </div>

@@ -1,40 +1,43 @@
 /** @type {import('tailwindcss').Config} */
-// Tema gelap "glass": midnight + navy + champagne, terinspirasi dashboard kaca premium.
+// Tema "glass" midnight + champagne, dengan mode gelap & terang (variabel CSS di index.css).
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        base: '#060A14', // latar halaman
+        // Warna tema = variabel CSS (lihat index.css) → otomatis ikut mode gelap/terang.
+        base: 'rgb(var(--base) / <alpha-value>)', // latar halaman
         midnight: { DEFAULT: '#0F172A', 900: '#0B1120', 800: '#0F172A', 700: '#1E293B', 600: '#334155' },
         navy: '#1E293B',
-        panel: '#0E1526', // permukaan kartu (dipakai dengan transparansi)
+        panel: 'rgb(var(--panel) / <alpha-value>)', // permukaan kartu (dipakai dengan transparansi)
+        // "fg" = lapisan tipis di atas latar (putih di mode gelap, navy di mode terang)
+        fg: 'rgb(var(--fg) / <alpha-value>)',
         champagne: {
-          DEFAULT: '#D4B483',
-          50: '#1A1610',
-          100: '#262017',
+          DEFAULT: 'rgb(var(--champ) / <alpha-value>)',
+          50: 'rgb(var(--champ-50) / <alpha-value>)',
+          100: 'rgb(var(--champ-100) / <alpha-value>)',
           200: '#EADAB9',
           300: '#E2C99C',
-          400: '#D4B483',
+          400: 'rgb(var(--champ) / <alpha-value>)',
           500: '#C9A56E',
-          600: '#D4B483',
-          700: '#E6CFA6',
+          600: 'rgb(var(--champ) / <alpha-value>)',
+          700: 'rgb(var(--champ-700) / <alpha-value>)',
         },
         // "ivory" = warna teks terang dari palet
         ivory: { DEFAULT: '#FAF8F3', 100: '#F5F2EA', 200: '#EEE9DD', 300: '#E2DCCC' },
-        // "ink" = hierarki teks di atas latar gelap
-        ink: { DEFAULT: '#F4F1EA', soft: '#C4CAD6', muted: '#8A94A8', faint: '#5D677C' },
+        // "ink" = hierarki teks
+        ink: { DEFAULT: 'rgb(var(--ink) / <alpha-value>)', soft: 'rgb(var(--ink-soft) / <alpha-value>)', muted: 'rgb(var(--ink-muted) / <alpha-value>)', faint: 'rgb(var(--ink-faint) / <alpha-value>)' },
         status: {
-          aktif: '#5FD3A2',
-          aktifBg: 'rgba(95,211,162,.12)',
-          warn: '#F2B657',
-          warnBg: 'rgba(242,182,87,.13)',
-          end: '#F2777D',
-          endBg: 'rgba(242,119,125,.13)',
-          renew: '#86A8F5',
-          renewBg: 'rgba(134,168,245,.13)',
-          off: '#A3ACBD',
-          offBg: 'rgba(163,172,189,.13)',
+          aktif: 'rgb(var(--st-aktif) / <alpha-value>)',
+          aktifBg: 'rgb(var(--st-aktif) / .13)',
+          warn: 'rgb(var(--st-warn) / <alpha-value>)',
+          warnBg: 'rgb(var(--st-warn) / .14)',
+          end: 'rgb(var(--st-end) / <alpha-value>)',
+          endBg: 'rgb(var(--st-end) / .13)',
+          renew: 'rgb(var(--st-renew) / <alpha-value>)',
+          renewBg: 'rgb(var(--st-renew) / .13)',
+          off: 'rgb(var(--st-off) / <alpha-value>)',
+          offBg: 'rgb(var(--st-off) / .14)',
         },
         brand: { green: '#1D7948', yellow: '#F2C12D', orange: '#CA7F2C' },
       },
@@ -44,8 +47,8 @@ export default {
         serif: ['"Instrument Serif"', 'Georgia', 'serif'],
       },
       boxShadow: {
-        soft: '0 1px 0 rgba(255,255,255,.05) inset, 0 20px 40px -24px rgba(0,0,0,.7)',
-        lift: '0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -20px rgba(0,0,0,.8)',
+        soft: 'var(--shadow-soft)',
+        lift: 'var(--shadow-lift)',
         gold: '0 0 0 1px rgba(212,180,131,.45), 0 10px 30px -8px rgba(212,180,131,.45)',
         glow: '0 0 24px rgba(212,180,131,.55)',
       },

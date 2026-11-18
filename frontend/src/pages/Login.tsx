@@ -3,7 +3,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ArrowRight, BellRing, Eye, EyeOff, FileCheck2, Lock, Mail, ShieldCheck } from 'lucide-react'
-import { Logo, Spinner } from '../components/ui'
+import { Logo, Spinner, ThemeToggle } from '../components/ui'
 import Ambient from '../components/Ambient'
 import { useLite } from '../lib/perf'
 import LiteArt from '../components/LiteArt'
@@ -55,7 +55,7 @@ export default function Login() {
     <div ref={root} className="relative flex min-h-screen bg-base">
       <Ambient />
       {/* ---------- Panel kiri: brand + 3D ---------- */}
-      <aside className="noise relative z-10 m-4 hidden w-[56%] overflow-hidden rounded-[30px] border border-white/[.07] bg-[#0A1020] shadow-lift lg:block">
+      <aside className="theme-dark noise relative z-10 m-4 hidden w-[56%] overflow-hidden rounded-[30px] border border-fg/[.07] bg-[#0A1020] shadow-lift lg:block">
         {lite
           ? <>
             <div className="absolute inset-0" style={{ background: 'radial-gradient(80% 60% at 70% 80%, rgba(212,180,131,.18), transparent 70%)' }} />
@@ -81,7 +81,7 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="hero-fade grid max-w-xl grid-cols-3 gap-6 border-t border-white/10 pt-8">
+          <div className="hero-fade grid max-w-xl grid-cols-3 gap-6 border-t border-fg/10 pt-8">
             {[
               { icon: BellRing, t: 'Reminder 3 bulan', d: 'Di dashboard & email' },
               { icon: FileCheck2, t: 'Arsip file PKS', d: 'PDF, Word, gambar' },
@@ -99,6 +99,7 @@ export default function Login() {
 
       {/* ---------- Panel kanan: form ---------- */}
       <main className="relative z-10 flex flex-1 items-center justify-center px-6 py-12">
+        <div className="absolute right-6 top-6 z-10"><ThemeToggle /></div>
         <div className="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-champagne/15 blur-3xl" />
         <form ref={formRef} onSubmit={submit} className="card relative w-full max-w-[440px] p-8 sm:p-10" noValidate>
           <div className="form-item mb-8 lg:hidden"><Logo /></div>

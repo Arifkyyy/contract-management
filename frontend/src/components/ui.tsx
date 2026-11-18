@@ -2,9 +2,10 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { AlertTriangle, Ban, CheckCircle2, Clock, RefreshCw, X, XCircle } from 'lucide-react'
+import { AlertTriangle, Ban, CheckCircle2, Clock, Moon, RefreshCw, Sun, X, XCircle } from 'lucide-react'
 import clsx from 'clsx'
 import type { Status } from '../lib/types'
+import { toggleTheme, useTheme } from '../lib/theme'
 
 /* ---------- Logo (Badan Bank Tanah) ---------- */
 export function Logo({ compact = false, size = 'md' }: { light?: boolean; compact?: boolean; size?: 'md' | 'lg' }) {
@@ -20,6 +21,20 @@ export function Logo({ compact = false, size = 'md' }: { light?: boolean; compac
         </div>
       )}
     </div>
+  )
+}
+
+/* ---------- Tombol mode gelap / terang ---------- */
+export function ThemeToggle({ className }: { className?: string }) {
+  const theme = useTheme()
+  const light = theme === 'light'
+  const label = light ? 'Ganti ke mode gelap' : 'Ganti ke mode terang'
+  return (
+    <button type="button" onClick={toggleTheme} aria-label={label} title={label}
+      className={clsx('relative grid h-11 w-11 place-items-center overflow-hidden rounded-xl border border-fg/[.08] bg-fg/[.04] text-ink-soft transition hover:border-champagne/40 hover:text-champagne', className)}>
+      <Sun className={clsx('absolute h-[18px] w-[18px] transition-all duration-500', light ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-50 opacity-0')} />
+      <Moon className={clsx('absolute h-[18px] w-[18px] transition-all duration-500', light ? 'rotate-90 scale-50 opacity-0' : 'rotate-0 scale-100 opacity-100')} />
+    </button>
   )
 }
 
@@ -53,7 +68,7 @@ export function TimeBar({ progress, status }: { progress: number; status: Status
   const color =
     status === 'berakhir' ? 'bg-status-end' : status === 'segera_habis' ? 'bg-status-warn' : status === 'diperpanjang' ? 'bg-status-renew' : status === 'tidak_diperpanjang' ? 'bg-status-off' : 'bg-gradient-to-r from-champagne-500 to-champagne-300'
   return (
-    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[.07]">
+    <div className="h-1.5 w-full overflow-hidden rounded-full bg-fg/[.07]">
       <div ref={ref} className={clsx('h-full origin-left rounded-full', color)} style={{ transform: `scaleX(${progress / 100})` }} />
     </div>
   )
@@ -103,8 +118,8 @@ export function Modal({ open, onClose, title, subtitle, children, width = 'max-w
   return createPortal(
     <div className="fixed inset-0 z-[90] grid place-items-center p-4">
       <div ref={backdrop} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div ref={panel} role="dialog" aria-modal="true" className={clsx('relative w-full rounded-[26px] border border-white/[.08] bg-[#0E1526]/95 p-7 shadow-lift backdrop-blur-2xl', width)}>
-        <button onClick={onClose} className="absolute right-5 top-5 rounded-lg p-1.5 text-ink-faint hover:bg-white/[.06] hover:text-ink" aria-label="Tutup">
+      <div ref={panel} role="dialog" aria-modal="true" className={clsx('relative w-full rounded-[26px] border border-fg/[.08] bg-panel/95 p-7 shadow-lift backdrop-blur-2xl', width)}>
+        <button onClick={onClose} className="absolute right-5 top-5 rounded-lg p-1.5 text-ink-faint hover:bg-fg/[.06] hover:text-ink" aria-label="Tutup">
           <X className="h-4 w-4" />
         </button>
         <h3 className="text-[22px] font-semibold tracking-tight text-ink">{title}</h3>
@@ -141,7 +156,7 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, message, confir
 
 /* ---------- Skeleton & empty ---------- */
 export const Skeleton = ({ className }: { className?: string }) => (
-  <div className={clsx('animate-pulse rounded-xl bg-white/[.06]', className)} />
+  <div className={clsx('animate-pulse rounded-xl bg-fg/[.06]', className)} />
 )
 
 export function EmptyState({ title, desc, action, icon }: { title: string; desc?: string; action?: ReactNode; icon?: ReactNode }) {

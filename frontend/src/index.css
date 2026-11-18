@@ -2,13 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ================= Token tema =================
+   Mode gelap = bawaan. Mode terang aktif lewat <html data-theme="light">.
+   .theme-dark / .card-dark selalu memakai palet gelap (panel aksen di mode terang). */
+:root, .theme-dark, .card-dark {
+  --base: 6 10 20;
+  --panel: 14 21 38;
+  --fg: 255 255 255;
+  --ink: 244 241 234;
+  --ink-soft: 196 202 214;
+  --ink-muted: 138 148 168;
+  --ink-faint: 93 103 124;
+  --champ: 212 180 131;
+  --champ-50: 26 22 16;
+  --champ-100: 38 32 23;
+  --champ-700: 230 207 166;
+  --st-aktif: 95 211 162;
+  --st-warn: 242 182 87;
+  --st-end: 242 119 125;
+  --st-renew: 134 168 245;
+  --st-off: 163 172 189;
+  --shadow-soft: 0 1px 0 rgba(255,255,255,.05) inset, 0 20px 40px -24px rgba(0,0,0,.7);
+  --shadow-lift: 0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -20px rgba(0,0,0,.8);
+  --card-bg: linear-gradient(180deg, rgba(22,32,54,.78) 0%, rgba(13,20,36,.74) 100%);
+  --sidebar-bg: linear-gradient(180deg, rgba(20,29,51,.78) 0%, rgba(10,16,30,.82) 100%);
+  --gold-grad: linear-gradient(100deg, #F3E4C4 0%, #D4B483 45%, #B08A52 100%);
+  --scroll-thumb: #253047;
+  --date-icon: invert(.8) sepia(.3);
+  color: rgb(var(--ink));
+}
+:root[data-theme='light'] {
+  --base: 246 243 236;
+  --panel: 255 255 255;
+  --fg: 15 23 42;
+  --ink: 20 27 45;
+  --ink-soft: 59 68 88;
+  --ink-muted: 98 107 124;
+  --ink-faint: 140 147 161;
+  --champ: 160 118 56;
+  --champ-50: 251 246 236;
+  --champ-100: 244 234 214;
+  --champ-700: 134 99 45;
+  --st-aktif: 22 145 98;
+  --st-warn: 180 116 22;
+  --st-end: 210 64 76;
+  --st-renew: 59 104 210;
+  --st-off: 107 115 133;
+  --shadow-soft: 0 1px 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(15,23,42,.05), 0 18px 40px -24px rgba(15,23,42,.22);
+  --shadow-lift: 0 1px 0 rgba(255,255,255,.9) inset, 0 2px 6px rgba(15,23,42,.05), 0 30px 60px -28px rgba(15,23,42,.3);
+  --card-bg: linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(255,255,255,.84) 100%);
+  --sidebar-bg: linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(250,247,240,.86) 100%);
+  --gold-grad: linear-gradient(100deg, #C59A55 0%, #A67C3D 45%, #7E5A26 100%);
+  --scroll-thumb: #D6CFBF;
+  --date-icon: none;
+}
+/* panel aksen gelap tetap gelap walau mode terang */
+:root[data-theme='light'] .theme-dark, :root[data-theme='light'] .card-dark {
+  --shadow-soft: 0 1px 0 rgba(255,255,255,.05) inset, 0 20px 40px -24px rgba(15,23,42,.45);
+  --shadow-lift: 0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -24px rgba(15,23,42,.5);
+}
+
 @layer base {
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; color-scheme: dark; }
+  html[data-theme='light'] { color-scheme: light; }
+  html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition: background-color .35s ease, border-color .35s ease, color .35s ease, fill .35s ease !important; }
   body { @apply bg-base text-ink font-sans; font-feature-settings: 'ss01', 'cv11'; }
   ::selection { background: #D4B483; color: #0F172A; }
-  input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.8) sepia(.3); opacity: .6; cursor: pointer; }
-  select option { background: #0E1526; color: #F4F1EA; }
-  * { scrollbar-width: thin; scrollbar-color: #253047 transparent; }
+  input[type='date']::-webkit-calendar-picker-indicator { filter: var(--date-icon); opacity: .6; cursor: pointer; }
+  select option { background: rgb(var(--panel)); color: rgb(var(--ink)); }
+  * { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
 }
 
 @layer components {
@@ -16,8 +78,8 @@
 
   /* Kartu kaca */
   .card {
-    @apply relative rounded-[22px] border border-white/[.07] shadow-soft;
-    background: linear-gradient(180deg, rgba(22,32,54,.78) 0%, rgba(13,20,36,.74) 100%);
+    @apply relative rounded-[22px] border border-fg/[.07] shadow-soft;
+    background: var(--card-bg);
   }
   /* Kartu unggulan: kaca dengan cahaya champagne */
   .card-dark {
@@ -45,26 +107,26 @@
   .btn-primary:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 10px 30px -8px rgba(212,180,131,.9); }
   .btn-gold { @apply btn-primary; }
   .btn-outline { @apply btn border border-champagne/35 bg-champagne/[.06] text-champagne hover:border-champagne/70 hover:bg-champagne/[.12]; }
-  .btn-ghost { @apply btn text-ink-soft hover:bg-white/[.06] hover:text-ink; }
+  .btn-ghost { @apply btn text-ink-soft hover:bg-fg/[.06] hover:text-ink; }
   .btn-danger { @apply btn bg-status-end text-midnight hover:brightness-110; }
 
   .label { @apply mb-1.5 block text-[13px] font-medium text-ink-soft; }
   .hint { @apply mt-1.5 text-xs text-ink-faint; }
   .input {
-    @apply w-full rounded-xl border border-white/[.09] bg-white/[.035] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint
-           transition focus:border-champagne/70 focus:bg-white/[.05] focus:outline-none focus:ring-4 focus:ring-champagne/15;
+    @apply w-full rounded-xl border border-fg/[.09] bg-fg/[.035] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-faint
+           transition focus:border-champagne/70 focus:bg-fg/[.05] focus:outline-none focus:ring-4 focus:ring-champagne/15;
   }
   .input-error { @apply border-status-end/70 focus:border-status-end focus:ring-status-end/15; }
   .chip { @apply inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition; }
-  .chip-off { @apply border-white/[.08] bg-white/[.03] text-ink-soft hover:border-champagne/40 hover:text-ink; }
+  .chip-off { @apply border-fg/[.08] bg-fg/[.03] text-ink-soft hover:border-champagne/40 hover:text-ink; }
   .chip-on { @apply border-champagne/60 bg-champagne/[.14] text-champagne shadow-[0_0_20px_-6px_rgba(212,180,131,.6)]; }
 
   .gold-text {
-    background: linear-gradient(100deg, #F3E4C4 0%, #D4B483 45%, #B08A52 100%);
+    background: var(--gold-grad);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .hairline { background: linear-gradient(90deg, transparent, rgba(212,180,131,.45), transparent); height: 1px; }
-  .icon-tile { @apply grid place-items-center rounded-xl border border-white/[.08] bg-white/[.04]; }
+  .icon-tile { @apply grid place-items-center rounded-xl border border-fg/[.08] bg-fg/[.04]; }
 }
 
 @layer utilities {
@@ -80,10 +142,14 @@
 .ambient .orb { position: absolute; border-radius: 9999px; will-change: transform; }
 .ambient .grid-lines {
   position: absolute; inset: 0; opacity: .35;
-  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-image: linear-gradient(rgb(var(--fg) / .035) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--fg) / .035) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
 }
+
+.sidebar-surface { background: var(--sidebar-bg); }
+[data-theme='light'] .ambient .orb { opacity: .55; }
+[data-theme='light'] .ambient .grid-lines { opacity: .6; }
 
 /* Mode ringan: matikan efek mahal */
 .lite *, .lite *::before, .lite *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }

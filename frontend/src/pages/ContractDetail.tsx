@@ -167,7 +167,7 @@ export default function ContractDetail() {
               <button onClick={() => setAddOpen(true)} className="btn border border-champagne/40 text-champagne hover:bg-champagne/10">
                 <FilePlus2 className="h-4 w-4" /> Catat perpanjangan (addendum)
               </button>
-              <button onClick={() => setConfirmDel(true)} className="btn text-ink/60 hover:bg-white/5 hover:text-[#F2B8B2]"><Trash2 className="h-4 w-4" /> Hapus</button>
+              <button onClick={() => setConfirmDel(true)} className="btn text-ink/60 hover:bg-fg/5 hover:text-[#F2B8B2]"><Trash2 className="h-4 w-4" /> Hapus</button>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ export default function ContractDetail() {
 
         {/* Garis waktu */}
         <div className="relative mt-10">
-          <div className="relative h-2 rounded-full bg-white/10">
+          <div className="relative h-2 rounded-full bg-fg/10">
             <div className="absolute inset-y-0 right-0 rounded-r-full bg-status-warn/35" style={{ left: `${remPct}%` }} />
             <div className="tl-fill absolute inset-y-0 left-0 origin-left rounded-full bg-gradient-to-r from-champagne-600 to-champagne-300" style={{ width: `${c.progress}%` }} />
             <span className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2" style={{ left: `${c.progress}%` }}><span className="tl-dot block h-4 w-4 rounded-full border-[3px] border-midnight bg-champagne shadow-gold" /></span>
@@ -208,13 +208,13 @@ export default function ContractDetail() {
               return (
                 <button key={p.v} type="button" role="radio" aria-checked={on} onClick={() => setProses(p.v)}
                   className={clsx('flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition',
-                    on ? 'border-champagne/50 bg-champagne/[.08]' : 'border-white/[.06] bg-white/[.02] hover:border-white/[.14] hover:bg-white/[.04]')}>
+                    on ? 'border-champagne/50 bg-champagne/[.08]' : 'border-fg/[.06] bg-fg/[.02] hover:border-fg/[.14] hover:bg-fg/[.04]')}>
                   <Icon className={clsx('h-4 w-4 shrink-0', on ? p.tone : 'text-ink-faint')} />
                   <span className="min-w-0 flex-1">
                     <span className={clsx('block text-sm font-semibold', on ? 'text-ink' : 'text-ink-soft')}>{p.label}</span>
                     <span className="block text-xs text-ink-muted">{p.desc}</span>
                   </span>
-                  <span className={clsx('h-4 w-4 shrink-0 rounded-full border-2', on ? 'border-champagne bg-champagne shadow-[inset_0_0_0_3px_#0E1526]' : 'border-white/20')} />
+                  <span className={clsx('h-4 w-4 shrink-0 rounded-full border-2', on ? 'border-champagne bg-champagne shadow-[inset_0_0_0_3px_rgb(var(--panel))]' : 'border-fg/20')} />
                 </button>
               )
             })}
@@ -251,10 +251,10 @@ export default function ContractDetail() {
             <button onClick={() => setAddOpen(true)} className="btn-outline shrink-0 text-[13px]"><FilePlus2 className="h-4 w-4" /> Addendum</button>
           </div>
 
-          <ol className="relative mt-6 space-y-5 before:absolute before:bottom-2 before:left-[15px] before:top-2 before:w-px before:bg-white/[.08]">
+          <ol className="relative mt-6 space-y-5 before:absolute before:bottom-2 before:left-[15px] before:top-2 before:w-px before:bg-fg/[.08]">
             <li className="relative flex gap-4">
-              <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/[.1] bg-[#0E1526] text-ink-muted"><FileText className="h-3.5 w-3.5" /></span>
-              <div className="min-w-0 flex-1 rounded-2xl border border-white/[.05] bg-white/[.02] p-4">
+              <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-fg/[.1] bg-panel text-ink-muted"><FileText className="h-3.5 w-3.5" /></span>
+              <div className="min-w-0 flex-1 rounded-2xl border border-fg/[.05] bg-fg/[.02] p-4">
                 <p className="text-sm font-semibold text-ink">PKS awal <span className="font-normal text-ink-muted">· {c.nomor_pks}</span></p>
                 <p className="mt-1 text-xs text-ink-muted">
                   {tanggal(c.tanggal_mulai ?? c.tanggal_pks)} – {tanggal(first?.tanggal_akhir_lama ?? c.tanggal_berakhir)} · {rupiah(first?.nilai_lama ?? c.nilai_kontrak)}
@@ -263,15 +263,15 @@ export default function ContractDetail() {
             </li>
             {c.addendum.map((a) => (
               <li key={a.id} className="relative flex gap-4">
-                <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-champagne/40 bg-[#0E1526] text-[11px] font-bold text-champagne">{a.urutan}</span>
-                <div className="min-w-0 flex-1 rounded-2xl border border-white/[.05] bg-white/[.02] p-4">
+                <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-champagne/40 bg-panel text-[11px] font-bold text-champagne">{a.urutan}</span>
+                <div className="min-w-0 flex-1 rounded-2xl border border-fg/[.05] bg-fg/[.02] p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-ink">Addendum ke-{a.urutan} <span className="font-normal text-ink-muted">· {a.nomor}</span></p>
                       <p className="text-xs text-ink-faint">Tanggal addendum {tanggal(a.tanggal)}{a.created_by ? ` · dicatat oleh ${a.created_by}` : ''}</p>
                     </div>
                     <div className="flex shrink-0 gap-0.5">
-                      {a.has_file && <button onClick={() => downloadAddendum(a)} className="rounded-lg p-2 text-ink-muted hover:bg-white/[.05] hover:text-ink" title={`Unduh ${a.file_name}`}><Download className="h-4 w-4" /></button>}
+                      {a.has_file && <button onClick={() => downloadAddendum(a)} className="rounded-lg p-2 text-ink-muted hover:bg-fg/[.05] hover:text-ink" title={`Unduh ${a.file_name}`}><Download className="h-4 w-4" /></button>}
                       {a.id === lastAddId && <button onClick={() => setDelAdd(a)} className="rounded-lg p-2 text-ink-muted hover:bg-status-endBg hover:text-status-end" title="Hapus addendum"><Trash2 className="h-4 w-4" /></button>}
                     </div>
                   </div>
@@ -291,7 +291,7 @@ export default function ContractDetail() {
             ))}
           </ol>
           {c.addendum.length === 0 && (
-            <p className="mt-5 flex items-center gap-2 rounded-2xl border border-dashed border-white/[.1] px-4 py-3 text-sm text-ink-muted">
+            <p className="mt-5 flex items-center gap-2 rounded-2xl border border-dashed border-fg/[.1] px-4 py-3 text-sm text-ink-muted">
               <History className="h-4 w-4 shrink-0" /> Belum ada addendum. Perpanjangan yang dicatat akan muncul di sini.
             </p>
           )}
@@ -303,7 +303,7 @@ export default function ContractDetail() {
         <section className="reveal card p-7 lg:col-span-5">
           <p className="eyebrow text-champagne-600">Rincian</p>
           <h3 className="mt-1 font-semibold tracking-tight text-[19px] text-ink">Data kontrak</h3>
-          <dl className="mt-6 divide-y divide-white/[.06] text-sm">
+          <dl className="mt-6 divide-y divide-fg/[.06] text-sm">
             {[
               ['Nama kontrak', c.nama_kontrak],
               ['Penyedia', c.penyedia],
@@ -328,7 +328,7 @@ export default function ContractDetail() {
             ['Jaminan kontrak', c.jaminan_kontrak],
             ['Keterangan', c.keterangan],
           ] as const).filter(([, v]) => v).map(([k, v]) => (
-            <div key={k} className="mt-5 rounded-2xl bg-white/[.03] p-4">
+            <div key={k} className="mt-5 rounded-2xl bg-fg/[.03] p-4">
               <p className="eyebrow text-ink-faint">{k}</p>
               <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft">{v}</p>
             </div>
@@ -337,7 +337,7 @@ export default function ContractDetail() {
 
         {/* ---------- File ---------- */}
         <section className="reveal card overflow-hidden lg:col-span-7">
-          <div className="flex items-center justify-between gap-4 border-b border-white/[.07] px-7 py-5">
+          <div className="flex items-center justify-between gap-4 border-b border-fg/[.07] px-7 py-5">
             <div className="min-w-0">
               <p className="eyebrow text-champagne-600">Dokumen</p>
               <p className="mt-1 truncate font-semibold text-ink">{c.file_name ?? 'Belum ada file'}</p>
@@ -345,7 +345,7 @@ export default function ContractDetail() {
             </div>
             {c.has_file && (
               <div className="flex shrink-0 gap-2">
-                {preview && <a href={preview.url} target="_blank" rel="noreferrer" className="btn-ghost border border-white/[.07]" title="Buka di tab baru"><ExternalLink className="h-4 w-4" /></a>}
+                {preview && <a href={preview.url} target="_blank" rel="noreferrer" className="btn-ghost border border-fg/[.07]" title="Buka di tab baru"><ExternalLink className="h-4 w-4" /></a>}
                 <button onClick={download} className="btn-outline"><Download className="h-4 w-4" /> Unduh</button>
               </div>
             )}
@@ -485,7 +485,7 @@ function AddendumModal({ c, open, onClose, onSaved }: { c: Contract; open: boole
         </div>
         <div className="sm:col-span-2">
           <p className="label">File addendum <span className="font-normal text-ink-faint">(opsional)</span></p>
-          <div className="flex items-center gap-3 rounded-2xl border border-white/[.08] bg-white/[.03] p-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-fg/[.08] bg-fg/[.03] p-3">
             <Paperclip className="h-4 w-4 shrink-0 text-champagne" />
             <p className="min-w-0 flex-1 truncate text-sm text-ink-soft">{file ? `${file.name} · ${fileSize(file.size)}` : 'Belum ada file'}</p>
             {file && <button type="button" className="btn-ghost text-[13px]" onClick={() => setFile(null)}>Batal</button>}

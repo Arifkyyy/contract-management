@@ -121,13 +121,13 @@ export default function Dashboard() {
           </div>
 
           {/* Baris KPI ala kaca */}
-          <div className="relative mt-auto grid grid-cols-2 gap-2 rounded-2xl border border-white/[.08] bg-white/[.04] p-2 backdrop-blur-xl sm:grid-cols-3 xl:grid-cols-5">
+          <div className="relative mt-auto grid grid-cols-2 gap-2 rounded-2xl border border-fg/[.08] bg-fg/[.04] p-2 backdrop-blur-xl sm:grid-cols-3 xl:grid-cols-5">
             {STATUS_ORDER.map((s) => {
               const M = statusMeta[s]
               const Icon = M.icon
               return (
                 <button key={s} onClick={() => nav(`/kontrak?status=${s}`)}
-                  className="kpi group flex items-center gap-3 rounded-xl px-3 py-3 text-left transition hover:bg-white/[.06]">
+                  className="kpi group flex items-center gap-3 rounded-xl px-3 py-3 text-left transition hover:bg-fg/[.06]">
                   <span className={clsx('grid h-9 w-9 shrink-0 place-items-center rounded-lg', M.cls)}><Icon className="h-4 w-4" /></span>
                   <span className="min-w-0">
                     <CountUp value={data.counts[s]} className="block text-xl font-semibold leading-none tracking-tight text-ink" />
@@ -159,7 +159,7 @@ export default function Dashboard() {
       {/* ---------- Banner reminder ---------- */}
       {nSegera > 0 && (
         <section className="reveal relative overflow-hidden rounded-[22px] border border-status-warn/25 p-5 sm:px-6"
-          style={{ background: 'linear-gradient(90deg, rgba(242,182,87,.16), rgba(212,180,131,.05) 55%, rgba(14,21,38,.5))' }}>
+          style={{ background: 'linear-gradient(90deg, rgba(242,182,87,.16), rgba(212,180,131,.05) 55%, rgb(var(--panel) / .5))' }}>
           <div className="flex flex-wrap items-center gap-4">
             <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-status-warn text-midnight shadow-[0_0_24px_rgba(242,182,87,.55)]">
               <AlertTriangle className="h-5 w-5" />
@@ -184,7 +184,7 @@ export default function Dashboard() {
       <section className="grid gap-5 lg:grid-cols-12">
         <div className="reveal card p-6 sm:p-7 lg:col-span-7">
           <CardHead eyebrow="12 bulan ke depan" title="Jadwal kontrak berakhir"
-            action={<span className="rounded-full border border-white/[.08] bg-white/[.04] px-3 py-1 text-xs text-ink-muted">Per bulan</span>} />
+            action={<span className="rounded-full border border-fg/[.08] bg-fg/[.04] px-3 py-1 text-xs text-ink-muted">Per bulan</span>} />
           <div className="mt-7"><ExpiryTimeline data={data.timeline} /></div>
         </div>
 
@@ -192,14 +192,14 @@ export default function Dashboard() {
           <CardHead eyebrow="Perlu perhatian" title="Segera berakhir"
             action={<Link to="/kontrak?status=segera_habis" className="btn-ghost -mr-2 -mt-1 px-3 text-[13px]">Semua <ArrowRight className="h-4 w-4" /></Link>} />
           {data.segera_habis.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-white/[.1] py-12 text-center text-sm text-ink-muted">
+            <div className="mt-8 rounded-2xl border border-dashed border-fg/[.1] py-12 text-center text-sm text-ink-muted">
               Tidak ada kontrak yang berakhir dalam 3 bulan ke depan.
             </div>
           ) : (
             <ul className="mt-5 space-y-2.5">
               {data.segera_habis.slice(0, 4).map((c) => (
                 <li key={c.id}>
-                  <Link to={`/kontrak/${c.id}`} className="group flex items-center gap-4 rounded-2xl border border-white/[.05] bg-white/[.025] p-3.5 transition hover:border-champagne/30 hover:bg-white/[.05]">
+                  <Link to={`/kontrak/${c.id}`} className="group flex items-center gap-4 rounded-2xl border border-fg/[.05] bg-fg/[.025] p-3.5 transition hover:border-champagne/30 hover:bg-fg/[.05]">
                     <div className={clsx('grid h-14 w-14 shrink-0 place-items-center rounded-xl border text-center',
                       c.sisa_hari <= 30 ? 'border-status-end/30 bg-status-endBg' : 'border-status-warn/30 bg-status-warnBg')}>
                       <div>
@@ -231,10 +231,10 @@ export default function Dashboard() {
         <div className="reveal card p-6 sm:p-7 lg:col-span-7">
           <CardHead eyebrow="Aktivitas" title="Baru ditambahkan"
             action={<Link to="/kontrak?sort=created_at:desc" className="btn-ghost -mr-2 -mt-1 px-3 text-[13px]">Semua <ArrowUpRight className="h-4 w-4" /></Link>} />
-          <ul className="mt-4 divide-y divide-white/[.05]">
+          <ul className="mt-4 divide-y divide-fg/[.05]">
             {data.terbaru.map((c) => (
               <li key={c.id}>
-                <Link to={`/kontrak/${c.id}`} className="group -mx-3 flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-white/[.04]">
+                <Link to={`/kontrak/${c.id}`} className="group -mx-3 flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-fg/[.04]">
                   <span className="icon-tile h-10 w-10 shrink-0 text-champagne"><ScrollText className="h-[18px] w-[18px]" strokeWidth={1.6} /></span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-ink group-hover:text-champagne">{c.nama_kontrak}</span>

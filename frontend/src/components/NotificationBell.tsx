@@ -55,8 +55,8 @@ export default function NotificationBell() {
   return (
     <div ref={wrap} className="relative">
       <button onClick={() => setOpen((o) => !o)} aria-label={`Notifikasi, ${data.jumlah} kontrak segera habis`}
-        className={clsx('relative grid h-11 w-11 place-items-center rounded-xl border bg-white/[.04] transition',
-          open ? 'border-champagne shadow-gold' : 'border-white/[.07] hover:border-champagne/60')}>
+        className={clsx('relative grid h-11 w-11 place-items-center rounded-xl border bg-fg/[.04] transition',
+          open ? 'border-champagne shadow-gold' : 'border-fg/[.07] hover:border-champagne/60')}>
         <Bell className="h-[18px] w-[18px] text-ink" strokeWidth={1.8} />
         {data.jumlah > 0 && (
           <span ref={dot} className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-status-warn px-1 text-[10px] font-bold text-white ring-2 ring-base">
@@ -66,7 +66,7 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div ref={panel} className="absolute right-0 top-14 z-50 w-[380px] overflow-hidden rounded-2xl border border-white/[.07] bg-white/[.04] shadow-lift">
+        <div ref={panel} className="absolute right-0 top-14 z-50 w-[380px] overflow-hidden rounded-2xl border border-fg/[.07] bg-fg/[.04] shadow-lift">
           <div className="card-dark rounded-none px-5 py-4">
             <p className="eyebrow text-champagne">Reminder</p>
             <p className="mt-1 text-[15px] font-semibold">
@@ -82,7 +82,7 @@ export default function NotificationBell() {
             ) : (
               data.items.map((c) => (
                 <button key={c.id} onClick={() => { setOpen(false); nav(`/kontrak/${c.id}`) }}
-                  className="notif-item group flex w-full items-start gap-3 rounded-xl p-3 text-left transition hover:bg-white/[.05]">
+                  className="notif-item group flex w-full items-start gap-3 rounded-xl p-3 text-left transition hover:bg-fg/[.05]">
                   <span className={clsx('mt-1.5 h-2 w-2 shrink-0 rounded-full', c.status === 'berakhir' ? 'bg-status-end' : c.sisa_hari <= 30 ? 'bg-status-end' : 'bg-status-warn')} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-ink">{c.nama_kontrak}</span>
@@ -100,7 +100,7 @@ export default function NotificationBell() {
             )}
           </div>
           <button onClick={() => { setOpen(false); nav('/kontrak?status=segera_habis') }}
-            className="w-full border-t border-white/[.07] py-3 text-center text-[13px] font-semibold text-champagne-700 hover:bg-champagne/[.08]">
+            className="w-full border-t border-fg/[.07] py-3 text-center text-[13px] font-semibold text-champagne-700 hover:bg-champagne/[.08]">
             Lihat semua di Cek Kontrak
           </button>
         </div>

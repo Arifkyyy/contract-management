@@ -227,7 +227,7 @@ export default function ContractForm() {
           <div className="sm:col-span-2">
             <p className="label">Sisa kontrak <span className="font-normal text-ink-faint">(otomatis)</span></p>
             <div className={clsx('flex items-center gap-3 rounded-xl border px-4 py-3 text-sm',
-              !sisa ? 'border-dashed border-white/[.12] text-ink-faint'
+              !sisa ? 'border-dashed border-fg/[.12] text-ink-faint'
                 : status === 'berakhir' ? 'border-status-end/25 bg-status-endBg text-status-end'
                 : status === 'segera_habis' ? 'border-status-warn/25 bg-status-warnBg text-status-warn'
                 : 'border-status-aktif/20 bg-status-aktifBg text-status-aktif')}>
@@ -255,7 +255,7 @@ export default function ContractForm() {
           <div className="sm:col-span-2">
             <p className="label">File kontrak <span className="font-normal text-ink-faint">(opsional)</span></p>
             {showExisting ? (
-              <div className="flex items-center gap-4 rounded-2xl border border-white/[.07] bg-white/[.03] p-4">
+              <div className="flex items-center gap-4 rounded-2xl border border-fg/[.07] bg-fg/[.03] p-4">
                 <span className="grid h-11 w-11 place-items-center rounded-xl border border-champagne/30 bg-champagne/10 text-champagne"><FileText className="h-5 w-5" /></span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-ink">{existing!.file_name}</p>
@@ -278,7 +278,7 @@ export default function ContractForm() {
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInput.current?.click()}
                 onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={onDrop}
                 className={clsx('flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed px-6 py-10 text-center transition',
-                  drag ? 'border-champagne bg-champagne/[.08]' : errors.file ? 'border-status-end/50 bg-status-endBg/40' : 'border-white/[.12] hover:border-champagne/70 hover:bg-white/[.05]')}>
+                  drag ? 'border-champagne bg-champagne/[.08]' : errors.file ? 'border-status-end/50 bg-status-endBg/40' : 'border-fg/[.12] hover:border-champagne/70 hover:bg-fg/[.05]')}>
                 <UploadCloud className={clsx('h-8 w-8 transition', drag ? 'scale-110 text-champagne-600' : 'text-champagne-500')} strokeWidth={1.4} />
                 <p className="mt-3 text-sm font-semibold text-ink">Tarik file ke sini atau <span className="text-champagne-700 underline underline-offset-4">pilih file</span></p>
                 <p className="mt-1 text-xs text-ink-muted">PDF, DOC, DOCX, JPG, PNG · maks {MAX_MB} MB</p>
@@ -337,7 +337,7 @@ export default function ContractForm() {
             ))}
           </dl>
 
-          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.04] p-4">
+          <div className="mt-6 rounded-2xl border border-fg/10 bg-fg/[.04] p-4">
             <p className="text-xs text-champagne">Nilai kontrak</p>
             <p className="mt-1 font-semibold tracking-tight text-3xl text-ink tabular">{f.nilai_kontrak ? rupiah(Number(f.nilai_kontrak)) : 'Rp 0'}</p>
           </div>
@@ -352,7 +352,7 @@ export default function ContractForm() {
         </div>
 
         <div className="reveal flex gap-2">
-          <Link to={editing ? `/kontrak/${id}` : '/kontrak'} className="btn-ghost flex-1 border border-white/[.07] bg-white/[.04]">Batal</Link>
+          <Link to={editing ? `/kontrak/${id}` : '/kontrak'} className="btn-ghost flex-1 border border-fg/[.07] bg-fg/[.04]">Batal</Link>
           <button type="submit" disabled={saving} className="btn-primary h-12 flex-[2]">
             {saving ? <><Spinner /> Menyimpan…</> : editing ? 'Simpan perubahan' : 'Simpan kontrak'}
           </button>

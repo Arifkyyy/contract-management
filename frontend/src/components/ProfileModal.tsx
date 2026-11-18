@@ -56,7 +56,7 @@ export default function ProfileModal({ open, onClose }: { open: boolean; onClose
           <label className="label" htmlFor="p-nama">Nama</label>
           <input id="p-nama" className="input" value={nama} onChange={(e) => setNama(e.target.value)} minLength={2} required />
         </div>
-        <label className="flex cursor-pointer items-center justify-between rounded-xl border border-white/[.07] bg-white/[.03] px-4 py-3">
+        <label className="flex cursor-pointer items-center justify-between rounded-xl border border-fg/[.07] bg-fg/[.03] px-4 py-3">
           <span>
             <span className="block text-sm font-semibold text-ink">Terima email reminder</span>
             <span className="block text-xs text-ink-muted">Kirim email saat ada kontrak sisa ≤ 3 bulan</span>
