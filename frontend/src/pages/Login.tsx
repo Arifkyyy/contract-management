@@ -6,6 +6,7 @@ import { ArrowRight, BellRing, Eye, EyeOff, FileCheck2, Lock, Mail, ShieldCheck 
 import { Logo, Spinner } from '../components/ui'
 import Ambient from '../components/Ambient'
 import { useLite } from '../lib/perf'
+import LiteArt from '../components/LiteArt'
 import { useAuth } from '../context/AuthContext'
 import { errMsg } from '../lib/api'
 
@@ -56,7 +57,10 @@ export default function Login() {
       {/* ---------- Panel kiri: brand + 3D ---------- */}
       <aside className="noise relative z-10 m-4 hidden w-[56%] overflow-hidden rounded-[30px] border border-white/[.07] bg-[#0A1020] shadow-lift lg:block">
         {lite
-          ? <div className="absolute inset-0" style={{ background: 'radial-gradient(80% 60% at 70% 80%, rgba(212,180,131,.18), transparent 70%)' }} />
+          ? <>
+            <div className="absolute inset-0" style={{ background: 'radial-gradient(80% 60% at 70% 80%, rgba(212,180,131,.18), transparent 70%)' }} />
+            <LiteArt className="pointer-events-none absolute right-[-8%] top-[6%] h-[62%] w-[78%] opacity-90" />
+          </>
           : <Suspense fallback={null}><GoldScene className="absolute inset-0" /></Suspense>}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-midnight via-midnight/20 to-midnight/70" />
         <div className="relative z-10 flex h-full flex-col justify-between p-12 xl:p-16">

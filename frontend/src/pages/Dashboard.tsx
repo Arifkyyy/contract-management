@@ -12,6 +12,7 @@ import { api, downloadBlob, errMsg } from '../lib/api'
 import { rupiahCompact, rupiahShort, sapaan, tanggal, waktuRelatif } from '../lib/format'
 import type { Dashboard as D, Status } from '../lib/types'
 import { useLite } from '../lib/perf'
+import LiteArt from '../components/LiteArt'
 
 const HeroObject = lazy(() => import('../components/HeroObject'))
 const STATUS_ORDER: Status[] = ['aktif', 'segera_habis', 'berakhir', 'diperpanjang', 'tidak_diperpanjang']
@@ -89,9 +90,11 @@ export default function Dashboard() {
       <section className="grid gap-5 lg:grid-cols-12">
         <div className="reveal card-dark noise flex min-h-[340px] flex-col p-7 sm:p-9 lg:col-span-8">
           <div className="pointer-events-none absolute -right-10 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-champagne/20 blur-3xl" />
-          {!lite && <Suspense fallback={null}>
-            <HeroObject className="pointer-events-none absolute -right-4 top-0 hidden h-[64%] w-[36%] md:block" />
-          </Suspense>}
+          {lite
+            ? <LiteArt className="pointer-events-none absolute -right-4 top-0 hidden h-[64%] w-[36%] md:block" />
+            : <Suspense fallback={null}>
+              <HeroObject className="pointer-events-none absolute -right-4 top-0 hidden h-[64%] w-[36%] md:block" />
+            </Suspense>}
 
           <div className="relative mb-8 max-w-[560px]">
             <span className="inline-flex items-center gap-2 rounded-full border border-champagne/25 bg-champagne/10 px-3 py-1 text-[11px] font-medium text-champagne">
