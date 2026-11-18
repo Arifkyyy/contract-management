@@ -45,7 +45,7 @@ function Section({ icon, title, desc, children }: { icon: ReactNode; title: stri
   return (
     <section className="reveal card p-6 sm:p-8">
       <div className="flex items-start gap-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-champagne/40 bg-champagne/[.08] text-champagne-700">{icon}</span>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-accent/40 bg-accent/[.08] text-accent-700">{icon}</span>
         <div>
           <h3 className="font-semibold tracking-tight text-[18px] leading-tight text-ink">{title}</h3>
           <p className="mt-0.5 text-sm text-ink-muted">{desc}</p>
@@ -104,7 +104,7 @@ export default function ContractForm() {
 
   useGSAP(() => {
     if (loading) return
-    gsap.fromTo('.reveal', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', stagger: 0.08 })
+    gsap.fromTo('.reveal', { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out', stagger: 0.04 })
   }, { scope: root, dependencies: [loading] })
 
   const set = (k: keyof FormState, v: string) => {
@@ -255,8 +255,8 @@ export default function ContractForm() {
           <div className="sm:col-span-2">
             <p className="label">File kontrak <span className="font-normal text-ink-faint">(opsional)</span></p>
             {showExisting ? (
-              <div className="flex items-center gap-4 rounded-2xl border border-fg/[.07] bg-fg/[.03] p-4">
-                <span className="grid h-11 w-11 place-items-center rounded-xl border border-champagne/30 bg-champagne/10 text-champagne"><FileText className="h-5 w-5" /></span>
+              <div className="flex items-center gap-4 rounded-xl border border-line bg-fg/[.03] p-4">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-accent/30 bg-accent/10 text-accent"><FileText className="h-5 w-5" /></span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-ink">{existing!.file_name}</p>
                   <p className="text-xs text-ink-muted">{fileSize(existing!.file_size)} · file saat ini</p>
@@ -265,8 +265,8 @@ export default function ContractForm() {
                 <button type="button" className="btn-ghost text-[13px] text-status-end" onClick={() => setHapusFile(true)}><Trash2 className="h-4 w-4" /></button>
               </div>
             ) : file ? (
-              <div className="flex items-center gap-4 rounded-2xl border border-champagne/50 bg-champagne/[.08] p-4">
-                <span className="grid h-11 w-11 place-items-center rounded-xl border border-champagne/30 bg-champagne/10 text-champagne"><CheckCircle2 className="h-5 w-5" /></span>
+              <div className="flex items-center gap-4 rounded-xl border border-accent/50 bg-accent/[.08] p-4">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-accent/30 bg-accent/10 text-accent"><CheckCircle2 className="h-5 w-5" /></span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-ink">{file.name}</p>
                   <p className="text-xs text-ink-muted">{fileSize(file.size)} · siap diunggah</p>
@@ -277,10 +277,10 @@ export default function ContractForm() {
               <div role="button" tabIndex={0} onClick={() => fileInput.current?.click()}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInput.current?.click()}
                 onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={onDrop}
-                className={clsx('flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed px-6 py-10 text-center transition',
-                  drag ? 'border-champagne bg-champagne/[.08]' : errors.file ? 'border-status-end/50 bg-status-endBg/40' : 'border-fg/[.12] hover:border-champagne/70 hover:bg-fg/[.05]')}>
-                <UploadCloud className={clsx('h-8 w-8 transition', drag ? 'scale-110 text-champagne-600' : 'text-champagne-500')} strokeWidth={1.4} />
-                <p className="mt-3 text-sm font-semibold text-ink">Tarik file ke sini atau <span className="text-champagne-700 underline underline-offset-4">pilih file</span></p>
+                className={clsx('flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition',
+                  drag ? 'border-accent bg-accent/[.08]' : errors.file ? 'border-status-end/50 bg-status-endBg/40' : 'border-fg/[.12] hover:border-accent/70 hover:bg-fg/[.05]')}>
+                <UploadCloud className={clsx('h-8 w-8 transition', drag ? 'scale-110 text-accent-600' : 'text-accent-500')} strokeWidth={1.4} />
+                <p className="mt-3 text-sm font-semibold text-ink">Tarik file ke sini atau <span className="text-accent-700 underline underline-offset-4">pilih file</span></p>
                 <p className="mt-1 text-xs text-ink-muted">PDF, DOC, DOCX, JPG, PNG · maks {MAX_MB} MB</p>
                 {hapusFile && <p className="mt-2 text-xs text-status-end">File lama akan dihapus saat disimpan</p>}
               </div>
@@ -312,13 +312,13 @@ export default function ContractForm() {
       </div>
 
       {/* ---------- Preview ---------- */}
-      <aside className="space-y-4 lg:sticky lg:top-[100px] lg:col-span-4">
-        <div className="reveal card-dark noise p-7">
-          <p className="eyebrow text-champagne">Pratinjau</p>
-          <p className={clsx('mt-4 font-semibold tracking-tight text-[28px] leading-tight', f.nama_kontrak ? 'text-ink' : 'text-ink/30')}>
+      <aside className="space-y-4 lg:sticky lg:top-[88px] lg:col-span-4">
+        <div className="reveal card p-6">
+          <p className="eyebrow text-ink-muted">Pratinjau</p>
+          <p className={clsx('mt-3 font-semibold tracking-tight text-[22px] leading-tight', f.nama_kontrak ? 'text-ink' : 'text-ink-faint')}>
             {f.nama_kontrak || 'Nama kontrak'}
           </p>
-          <p className="mt-1 text-sm text-ink/55">{f.penyedia || 'Penyedia'}</p>
+          <p className="mt-1 text-sm text-ink-muted">{f.penyedia || 'Penyedia'}</p>
 
           <div className="hairline my-6" />
 
@@ -331,29 +331,29 @@ export default function ContractForm() {
               ['Durasi', durasi ? `${durasi} hari` : '—'],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-4">
-                <dt className="text-ink/45">{k}</dt>
+                <dt className="text-ink-faint">{k}</dt>
                 <dd className="truncate text-right font-medium text-ink">{v}</dd>
               </div>
             ))}
           </dl>
 
-          <div className="mt-6 rounded-2xl border border-fg/10 bg-fg/[.04] p-4">
-            <p className="text-xs text-champagne">Nilai kontrak</p>
-            <p className="mt-1 font-semibold tracking-tight text-3xl text-ink tabular">{f.nilai_kontrak ? rupiah(Number(f.nilai_kontrak)) : 'Rp 0'}</p>
+          <div className="mt-6 rounded-xl border border-line bg-fg/[.04] p-4">
+            <p className="text-xs text-ink-muted">Nilai kontrak</p>
+            <p className="mt-1 font-semibold tracking-tight text-2xl text-ink tabular">{f.nilai_kontrak ? rupiah(Number(f.nilai_kontrak)) : 'Rp 0'}</p>
           </div>
 
           <div className="mt-5 flex items-center justify-between">
-            <span className="text-xs text-ink/45">Status nanti</span>
-            {status ? <StatusBadge status={status} /> : <span className="text-xs text-ink/30">—</span>}
+            <span className="text-xs text-ink-faint">Status nanti</span>
+            {status ? <StatusBadge status={status} /> : <span className="text-xs text-ink-faint">—</span>}
           </div>
           {(file || showExisting) && (
-            <p className="mt-3 flex items-center gap-2 text-xs text-ink/55"><Paperclip className="h-3.5 w-3.5" /> {file?.name ?? existing?.file_name}</p>
+            <p className="mt-3 flex items-center gap-2 text-xs text-ink-muted"><Paperclip className="h-3.5 w-3.5" /> {file?.name ?? existing?.file_name}</p>
           )}
         </div>
 
         <div className="reveal flex gap-2">
-          <Link to={editing ? `/kontrak/${id}` : '/kontrak'} className="btn-ghost flex-1 border border-fg/[.07] bg-fg/[.04]">Batal</Link>
-          <button type="submit" disabled={saving} className="btn-primary h-12 flex-[2]">
+          <Link to={editing ? `/kontrak/${id}` : '/kontrak'} className="btn-outline flex-1">Batal</Link>
+          <button type="submit" disabled={saving} className="btn-primary h-11 flex-[2]">
             {saving ? <><Spinner /> Menyimpan…</> : editing ? 'Simpan perubahan' : 'Simpan kontrak'}
           </button>
         </div>

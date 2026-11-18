@@ -56,7 +56,7 @@ export default function NotificationBell() {
     <div ref={wrap} className="relative">
       <button onClick={() => setOpen((o) => !o)} aria-label={`Notifikasi, ${data.jumlah} kontrak segera habis`}
         className={clsx('relative grid h-11 w-11 place-items-center rounded-xl border bg-fg/[.04] transition',
-          open ? 'border-champagne shadow-gold' : 'border-fg/[.07] hover:border-champagne/60')}>
+          open ? 'border-accent' : 'border-line hover:border-accent/60')}>
         <Bell className="h-[18px] w-[18px] text-ink" strokeWidth={1.8} />
         {data.jumlah > 0 && (
           <span ref={dot} className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-status-warn px-1 text-[10px] font-bold text-white ring-2 ring-base">
@@ -66,17 +66,17 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div ref={panel} className="absolute right-0 top-14 z-50 w-[380px] overflow-hidden rounded-2xl border border-fg/[.07] bg-fg/[.04] shadow-lift">
-          <div className="card-dark rounded-none px-5 py-4">
-            <p className="eyebrow text-champagne">Reminder</p>
-            <p className="mt-1 text-[15px] font-semibold">
+        <div ref={panel} className="absolute right-0 top-14 z-50 w-[380px] overflow-hidden rounded-xl border border-line bg-panel shadow-lift">
+          <div className="border-b border-line px-5 py-4">
+            <p className="eyebrow text-ink-muted">Pengingat</p>
+            <p className="mt-0.5 text-[15px] font-semibold text-ink">
               {data.jumlah > 0 ? `${data.jumlah} kontrak sisa ≤ 3 bulan` : 'Semua kontrak aman'}
             </p>
           </div>
           <div className="max-h-[360px] overflow-y-auto p-2">
             {data.items.length === 0 ? (
               <div className="flex flex-col items-center py-10 text-center text-sm text-ink-muted">
-                <BellOff className="mb-3 h-6 w-6 text-champagne-500" />
+                <BellOff className="mb-3 h-6 w-6 text-accent-500" />
                 Belum ada kontrak yang perlu diingatkan.
               </div>
             ) : (
@@ -94,13 +94,13 @@ export default function NotificationBell() {
                       <span className="text-ink-faint"> · {tanggal(c.tanggal_berakhir, true)}</span>
                     </span>
                   </span>
-                  <ChevronRight className="mt-1 h-4 w-4 text-ink-faint transition group-hover:translate-x-0.5 group-hover:text-champagne-600" />
+                  <ChevronRight className="mt-1 h-4 w-4 text-ink-faint transition group-hover:translate-x-0.5 group-hover:text-accent-600" />
                 </button>
               ))
             )}
           </div>
           <button onClick={() => { setOpen(false); nav('/kontrak?status=segera_habis') }}
-            className="w-full border-t border-fg/[.07] py-3 text-center text-[13px] font-semibold text-champagne-700 hover:bg-champagne/[.08]">
+            className="w-full border-t border-line py-3 text-center text-[13px] font-semibold text-accent-700 hover:bg-accent/[.08]">
             Lihat semua di Cek Kontrak
           </button>
         </div>

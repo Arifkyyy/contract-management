@@ -13,11 +13,11 @@ export function Logo({ compact = false, size = 'md' }: { light?: boolean; compac
   return (
     <div className="flex items-center gap-3">
       <img src="/brand/bbt-mark-sm.png" alt="Badan Bank Tanah" draggable={false}
-        className={clsx('w-auto select-none drop-shadow-[0_4px_14px_rgba(242,193,45,.25)]', lg ? 'h-12' : 'h-9')} />
+        className={clsx('w-auto select-none', lg ? 'h-12' : 'h-9')} />
       {!compact && (
         <div className="leading-tight">
           <p className={clsx('font-bold tracking-tight text-ink', lg ? 'text-[19px]' : 'text-[15px]')}>Badan Bank Tanah</p>
-          <p className={clsx('mt-0.5 font-medium text-champagne/80', lg ? 'text-[12px]' : 'text-[10.5px]')}>Contract Management</p>
+          <p className={clsx('mt-0.5 font-medium text-accent/80', lg ? 'text-[12px]' : 'text-[10.5px]')}>Contract Management</p>
         </div>
       )}
     </div>
@@ -31,7 +31,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   const label = light ? 'Ganti ke mode gelap' : 'Ganti ke mode terang'
   return (
     <button type="button" onClick={toggleTheme} aria-label={label} title={label}
-      className={clsx('relative grid h-11 w-11 place-items-center overflow-hidden rounded-xl border border-fg/[.08] bg-fg/[.04] text-ink-soft transition hover:border-champagne/40 hover:text-champagne', className)}>
+      className={clsx('relative grid h-11 w-11 place-items-center overflow-hidden rounded-xl border border-line bg-fg/[.04] text-ink-soft transition hover:border-accent/40 hover:text-accent', className)}>
       <Sun className={clsx('absolute h-[18px] w-[18px] transition-all duration-500', light ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-50 opacity-0')} />
       <Moon className={clsx('absolute h-[18px] w-[18px] transition-all duration-500', light ? 'rotate-90 scale-50 opacity-0' : 'rotate-0 scale-100 opacity-100')} />
     </button>
@@ -66,7 +66,7 @@ export function TimeBar({ progress, status }: { progress: number; status: Status
     gsap.fromTo(ref.current, { scaleX: 0 }, { scaleX: progress / 100, duration: 1.1, ease: 'power3.out', delay: 0.15 })
   }, [progress])
   const color =
-    status === 'berakhir' ? 'bg-status-end' : status === 'segera_habis' ? 'bg-status-warn' : status === 'diperpanjang' ? 'bg-status-renew' : status === 'tidak_diperpanjang' ? 'bg-status-off' : 'bg-gradient-to-r from-champagne-500 to-champagne-300'
+    status === 'berakhir' ? 'bg-status-end' : status === 'segera_habis' ? 'bg-status-warn' : status === 'diperpanjang' ? 'bg-status-renew' : status === 'tidak_diperpanjang' ? 'bg-status-off' : 'bg-gradient-to-r from-accent-500 to-accent-300'
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full bg-fg/[.07]">
       <div ref={ref} className={clsx('h-full origin-left rounded-full', color)} style={{ transform: `scaleX(${progress / 100})` }} />
@@ -117,8 +117,8 @@ export function Modal({ open, onClose, title, subtitle, children, width = 'max-w
   if (!open) return null
   return createPortal(
     <div className="fixed inset-0 z-[90] grid place-items-center p-4">
-      <div ref={backdrop} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div ref={panel} role="dialog" aria-modal="true" className={clsx('relative w-full rounded-[26px] border border-fg/[.08] bg-panel/95 p-7 shadow-lift backdrop-blur-2xl', width)}>
+      <div ref={backdrop} onClick={onClose} className="absolute inset-0 bg-black/60" />
+      <div ref={panel} role="dialog" aria-modal="true" className={clsx('relative w-full rounded-xl border border-line bg-panel/95 p-7 shadow-lift', width)}>
         <button onClick={onClose} className="absolute right-5 top-5 rounded-lg p-1.5 text-ink-faint hover:bg-fg/[.06] hover:text-ink" aria-label="Tutup">
           <X className="h-4 w-4" />
         </button>
@@ -162,7 +162,7 @@ export const Skeleton = ({ className }: { className?: string }) => (
 export function EmptyState({ title, desc, action, icon }: { title: string; desc?: string; action?: ReactNode; icon?: ReactNode }) {
   return (
     <div className="flex flex-col items-center px-6 py-16 text-center">
-      <div className="grid h-16 w-16 place-items-center rounded-2xl border border-champagne/40 bg-champagne/[.08] text-champagne-600">{icon}</div>
+      <div className="grid h-16 w-16 place-items-center rounded-xl border border-accent/40 bg-accent/[.08] text-accent-600">{icon}</div>
       <p className="mt-5 text-xl font-semibold text-ink">{title}</p>
       {desc && <p className="mt-1.5 max-w-sm text-sm text-ink-muted">{desc}</p>}
       {action && <div className="mt-6">{action}</div>}

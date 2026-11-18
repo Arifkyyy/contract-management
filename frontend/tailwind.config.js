@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-// Tema "glass" midnight + champagne, dengan mode gelap & terang (variabel CSS di index.css).
+// Tema kantor modern: hijau Badan Bank Tanah, mode terang & gelap (variabel CSS di index.css).
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
@@ -12,17 +12,20 @@ export default {
         panel: 'rgb(var(--panel) / <alpha-value>)', // permukaan kartu (dipakai dengan transparansi)
         // "fg" = lapisan tipis di atas latar (putih di mode gelap, navy di mode terang)
         fg: 'rgb(var(--fg) / <alpha-value>)',
-        champagne: {
-          DEFAULT: 'rgb(var(--champ) / <alpha-value>)',
-          50: 'rgb(var(--champ-50) / <alpha-value>)',
-          100: 'rgb(var(--champ-100) / <alpha-value>)',
-          200: '#EADAB9',
-          300: '#E2C99C',
-          400: 'rgb(var(--champ) / <alpha-value>)',
-          500: '#C9A56E',
-          600: 'rgb(var(--champ) / <alpha-value>)',
-          700: 'rgb(var(--champ-700) / <alpha-value>)',
+        // "accent" = warna utama (hijau Badan Bank Tanah); "on-accent" = teks di atasnya
+        accent: {
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+          50: 'rgb(var(--accent-50) / <alpha-value>)',
+          100: 'rgb(var(--accent-100) / <alpha-value>)',
+          200: 'rgb(var(--accent-200) / <alpha-value>)',
+          300: 'rgb(var(--accent-300) / <alpha-value>)',
+          400: 'rgb(var(--accent) / <alpha-value>)',
+          500: 'rgb(var(--accent) / <alpha-value>)',
+          600: 'rgb(var(--accent-600) / <alpha-value>)',
+          700: 'rgb(var(--accent-700) / <alpha-value>)',
         },
+        'on-accent': 'rgb(var(--on-accent) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
         // "ivory" = warna teks terang dari palet
         ivory: { DEFAULT: '#FAF8F3', 100: '#F5F2EA', 200: '#EEE9DD', 300: '#E2DCCC' },
         // "ink" = hierarki teks
@@ -49,11 +52,7 @@ export default {
       boxShadow: {
         soft: 'var(--shadow-soft)',
         lift: 'var(--shadow-lift)',
-        gold: '0 0 0 1px rgba(212,180,131,.45), 0 10px 30px -8px rgba(212,180,131,.45)',
-        glow: '0 0 24px rgba(212,180,131,.55)',
       },
-      borderRadius: { '4xl': '2rem' },
-      letterSpacing: { eyebrow: '.16em' },
     },
   },
   plugins: [],

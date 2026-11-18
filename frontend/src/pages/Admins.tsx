@@ -39,7 +39,7 @@ export default function Admins() {
 
   useGSAP(() => {
     if (!list) return
-    gsap.fromTo('.reveal', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', stagger: 0.07 })
+    gsap.fromTo('.reveal', { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out', stagger: 0.04 })
   }, { scope: root, dependencies: [list === null] })
 
   const patch = async (a: Admin, body: Partial<Admin>, ok: string) => {
@@ -89,25 +89,25 @@ export default function Admins() {
       <section className="reveal card overflow-hidden lg:col-span-8">
         <div className="flex flex-wrap items-center justify-between gap-4 px-7 py-6">
           <div>
-            <p className="eyebrow text-champagne-600">Akses panel</p>
+            <p className="eyebrow text-accent-600">Akses panel</p>
             <h3 className="mt-1 font-semibold tracking-tight text-[19px] text-ink">Akun admin</h3>
             <p className="mt-0.5 text-sm text-ink-muted">{list.length} admin · {list.filter((a) => a.is_active).length} aktif</p>
           </div>
           <button onClick={() => setAddOpen(true)} className="btn-primary"><Plus className="h-4 w-4" /> Tambah admin</button>
         </div>
-        <ul className="divide-y divide-fg/[.06] border-t border-fg/[.07]">
+        <ul className="divide-y divide-line border-t border-line">
           {list.map((a) => {
             const self = a.id === me?.id
             return (
               <li key={a.id} className={clsx('flex flex-wrap items-center gap-4 px-7 py-4', !a.is_active && 'opacity-60')}>
-                <span className={clsx('grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold', a.is_active ? 'bg-gradient-to-br from-champagne/30 to-champagne/5 border border-champagne/30 text-champagne' : 'bg-fg/[.08] text-ink-muted')}>
+                <span className={clsx('grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold', a.is_active ? 'bg-gradient-to-br from-accent/30 to-accent/5 border border-accent/30 text-accent' : 'bg-fg/[.08] text-ink-muted')}>
                   {initials(a.nama)}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 truncate font-semibold text-ink">
                     {a.nama}
-                    {self && <span className="rounded-full bg-champagne/[.14] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-champagne-700">Anda</span>}
-                    {!a.is_active && <span className="rounded-full bg-fg/[.08] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-muted">Nonaktif</span>}
+                    {self && <span className="rounded-full bg-accent/[.14] px-2 py-0.5 text-[10px] font-semibold text-accent-700">Anda</span>}
+                    {!a.is_active && <span className="rounded-full bg-fg/[.08] px-2 py-0.5 text-[10px] font-semibold text-ink-muted">Nonaktif</span>}
                   </p>
                   <p className="truncate text-xs text-ink-muted">{a.email} · login {a.last_login ? waktuRelatif(a.last_login) : 'belum pernah'}</p>
                 </div>
@@ -136,35 +136,35 @@ export default function Admins() {
 
       {/* ---------- Reminder email ---------- */}
       <aside className="space-y-6 lg:col-span-4">
-        <section className="reveal card-dark noise p-7">
+        <section className="reveal card p-6">
           <div className="flex items-center justify-between">
-            <p className="eyebrow text-champagne">Reminder email</p>
-            <ServerCog className="h-5 w-5 text-champagne/70" strokeWidth={1.5} />
+            <h2 className="text-[15px] font-semibold text-ink">Reminder email</h2>
+            <ServerCog className="h-5 w-5 text-ink-faint" strokeWidth={1.5} />
           </div>
           {info ? (
             <>
-              <p className={clsx('mt-4 flex items-center gap-2 text-lg font-semibold', info.smtp_aktif ? 'text-ink' : 'text-[#F2D3A0]')}>
-                {info.smtp_aktif ? <CheckCircle2 className="h-5 w-5 text-[#8FD3B0]" /> : <XCircle className="h-5 w-5" />}
+              <p className={clsx('mt-4 flex items-center gap-2 text-base font-semibold', info.smtp_aktif ? 'text-status-aktif' : 'text-status-warn')}>
+                {info.smtp_aktif ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                 {info.smtp_aktif ? 'Email aktif' : 'Email belum diatur'}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-ink/50">
+              <p className="mt-1 text-xs leading-relaxed text-ink-muted">
                 {info.smtp_aktif ? `Server ${info.smtp_host}` : 'Isi pengaturan SMTP di file backend/.env lalu restart backend.'}
               </p>
               <div className="hairline my-5" />
               <dl className="space-y-3 text-sm">
-                <div className="flex justify-between"><dt className="text-ink/45">Kirim tiap hari</dt><dd className="text-ink">{info.jam_kirim}</dd></div>
-                <div className="flex justify-between"><dt className="text-ink/45">Batas reminder</dt><dd className="text-ink">≤ {info.bulan_reminder} bulan</dd></div>
-                <div className="flex justify-between"><dt className="text-ink/45">Tahap kirim</dt><dd className="text-ink">3 bln · 30 hr · 7 hr</dd></div>
+                <div className="flex justify-between"><dt className="text-ink-faint">Kirim tiap hari</dt><dd className="text-ink">{info.jam_kirim}</dd></div>
+                <div className="flex justify-between"><dt className="text-ink-faint">Batas reminder</dt><dd className="text-ink">≤ {info.bulan_reminder} bulan</dd></div>
+                <div className="flex justify-between"><dt className="text-ink-faint">Tahap kirim</dt><dd className="text-ink">3 bln · 30 hr · 7 hr</dd></div>
               </dl>
-              <button onClick={sendNow} disabled={sending} className="btn-gold mt-6 w-full">
+              <button onClick={sendNow} disabled={sending} className="btn-primary mt-6 w-full">
                 {sending ? <Spinner /> : <Send className="h-4 w-4" />} Kirim reminder sekarang
               </button>
             </>
-          ) : <Skeleton className="mt-4 h-40 bg-fg/10" />}
+          ) : <Skeleton className="mt-4 h-40" />}
         </section>
 
         <section className="reveal card p-6">
-          <p className="eyebrow text-champagne-600">Riwayat pengiriman</p>
+          <h2 className="text-[15px] font-semibold text-ink">Riwayat pengiriman</h2>
           {info && info.riwayat.length > 0 ? (
             <ul className="mt-4 space-y-3">
               {info.riwayat.map((r, i) => (
@@ -221,7 +221,7 @@ function AddAdminModal({ open, onClose, onDone }: { open: boolean; onClose: () =
           <input id="a-pw" type="text" className="input" required minLength={8} value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} />
           <p className="hint">Minimal 8 karakter. Minta admin baru menggantinya setelah login.</p></div>
         <label className="flex cursor-pointer items-center gap-3 text-sm text-ink">
-          <input type="checkbox" checked={f.terima_email} onChange={(e) => setF({ ...f, terima_email: e.target.checked })} className="h-4 w-4 accent-[#D4B483]" />
+          <input type="checkbox" checked={f.terima_email} onChange={(e) => setF({ ...f, terima_email: e.target.checked })} className="h-4 w-4 accent-[rgb(var(--accent))]" />
           Kirim email reminder ke admin ini
         </label>
         <div className="flex justify-end gap-2 pt-2">

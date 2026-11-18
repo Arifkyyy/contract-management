@@ -14,9 +14,9 @@ function ToastItem({ t, onClose }: { t: Toast; onClose: () => void }) {
     gsap.fromTo(ref.current, { x: 40, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.45, ease: 'power3.out' })
   })
   const Icon = t.kind === 'success' ? CheckCircle2 : t.kind === 'error' ? XCircle : Info
-  const tone = t.kind === 'success' ? 'text-status-aktif' : t.kind === 'error' ? 'text-status-end' : 'text-champagne-600'
+  const tone = t.kind === 'success' ? 'text-status-aktif' : t.kind === 'error' ? 'text-status-end' : 'text-accent-600'
   return (
-    <div ref={ref} role="status" className="pointer-events-auto flex w-[22rem] items-start gap-3 rounded-2xl border border-fg/[.07] bg-panel/95 p-4 shadow-lift backdrop-blur">
+    <div ref={ref} role="status" className="pointer-events-auto flex w-[22rem] items-start gap-3 rounded-xl border border-line bg-panel/95 p-4 shadow-lift">
       <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${tone}`} />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-ink">{t.title}</p>

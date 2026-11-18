@@ -16,7 +16,7 @@ import type { Addendum, Contract, StatusProses } from '../lib/types'
 
 const PROSES: { v: StatusProses; label: string; desc: string; icon: typeof Circle; tone: string }[] = [
   { v: 'belum', label: 'Belum diproses', desc: 'Belum ada tindak lanjut', icon: Circle, tone: 'text-ink-muted' },
-  { v: 'proses', label: 'Sedang diproses', desc: 'Negosiasi / menunggu persetujuan', icon: Hourglass, tone: 'text-champagne' },
+  { v: 'proses', label: 'Sedang diproses', desc: 'Negosiasi / menunggu persetujuan', icon: Hourglass, tone: 'text-accent' },
   { v: 'diperpanjang', label: 'Sudah diperpanjang', desc: 'Addendum menyusul · reminder berhenti', icon: RefreshCw, tone: 'text-status-renew' },
   { v: 'tidak_diperpanjang', label: 'Tidak diperpanjang', desc: 'Kontrak diselesaikan · reminder berhenti', icon: Ban, tone: 'text-status-off' },
 ]
@@ -74,9 +74,9 @@ export default function ContractDetail() {
 
   useGSAP(() => {
     if (!c) return
-    gsap.fromTo('.reveal', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.75, ease: 'power3.out', stagger: 0.08 })
-    gsap.fromTo('.tl-fill', { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: 'power3.inOut', delay: 0.3 })
-    gsap.fromTo('.tl-dot', { scale: 0 }, { scale: 1, duration: 0.5, ease: 'back.out(3)', delay: 1.2 })
+    gsap.fromTo('.reveal', { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out', stagger: 0.04 })
+    gsap.fromTo('.tl-fill', { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: 'power2.out', delay: 0.1 })
+    gsap.fromTo('.tl-dot', { scale: 0 }, { scale: 1, duration: 0.3, ease: 'power2.out', delay: 0.6 })
   }, { scope: root, dependencies: [c?.id] })
 
   if (!c) return <div className="space-y-6"><Skeleton className="h-64" /><Skeleton className="h-96" /></div>
@@ -152,45 +152,44 @@ export default function ContractDetail() {
       </Link>
 
       {/* ---------- Header ---------- */}
-      <section className="reveal card-dark noise p-7 sm:p-10">
-        <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full border border-champagne/15" />
+      <section className="reveal card p-6 sm:p-8">
         <div className="relative flex flex-wrap items-start justify-between gap-8">
           <div className="min-w-0 max-w-2xl">
             <div className="flex flex-wrap items-center gap-3">
               <StatusBadge status={c.status} />
-              <span className="text-xs text-ink/45">PKS {c.nomor_pks}</span>
+              <span className="text-xs text-ink-faint">PKS {c.nomor_pks}</span>
             </div>
-            <h2 className="mt-4 font-semibold tracking-tight text-[40px] leading-[1.08] text-ink sm:text-[48px]">{c.nama_kontrak}</h2>
-            <p className="mt-2 text-ink/60">{c.penyedia}</p>
+            <h2 className="mt-4 font-semibold tracking-tight text-[28px] leading-tight text-ink sm:text-[32px]">{c.nama_kontrak}</h2>
+            <p className="mt-2 text-ink-muted">{c.penyedia}</p>
             <div className="mt-7 flex flex-wrap gap-2">
-              <Link to={`/kontrak/${c.id}/edit`} className="btn-gold"><Pencil className="h-4 w-4" /> Edit</Link>
-              <button onClick={() => setAddOpen(true)} className="btn border border-champagne/40 text-champagne hover:bg-champagne/10">
+              <Link to={`/kontrak/${c.id}/edit`} className="btn-primary"><Pencil className="h-4 w-4" /> Edit</Link>
+              <button onClick={() => setAddOpen(true)} className="btn-outline">
                 <FilePlus2 className="h-4 w-4" /> Catat perpanjangan (addendum)
               </button>
-              <button onClick={() => setConfirmDel(true)} className="btn text-ink/60 hover:bg-fg/5 hover:text-[#F2B8B2]"><Trash2 className="h-4 w-4" /> Hapus</button>
+              <button onClick={() => setConfirmDel(true)} className="btn text-ink-muted hover:bg-status-endBg hover:text-status-end"><Trash2 className="h-4 w-4" /> Hapus</button>
             </div>
           </div>
 
           <div className="shrink-0 text-right">
-            <p className="text-sm text-champagne">{c.sisa_hari < 0 ? 'Sudah lewat' : 'Sisa waktu'}</p>
-            <p className={clsx('font-semibold tracking-tight text-[88px] leading-none tabular', c.status === 'berakhir' ? 'text-[#F2B8B2]' : c.status === 'segera_habis' ? 'gold-text' : 'text-ink')}>
+            <p className="text-sm text-ink-muted">{c.sisa_hari < 0 ? 'Sudah lewat' : 'Sisa waktu'}</p>
+            <p className={clsx('font-bold tracking-tight text-[64px] leading-none tabular', c.status === 'berakhir' ? 'text-status-end' : c.status === 'segera_habis' ? 'text-status-warn' : 'text-ink')}>
               {bigNumber}
             </p>
-            <p className="text-sm text-ink/55">hari · {c.sisa_text}</p>
+            <p className="text-sm text-ink-muted">hari · {c.sisa_text}</p>
           </div>
         </div>
 
         {/* Garis waktu */}
-        <div className="relative mt-10">
-          <div className="relative h-2 rounded-full bg-fg/10">
+        <div className="relative mt-8">
+          <div className="relative h-2 rounded-full bg-fg/[.07]">
             <div className="absolute inset-y-0 right-0 rounded-r-full bg-status-warn/35" style={{ left: `${remPct}%` }} />
-            <div className="tl-fill absolute inset-y-0 left-0 origin-left rounded-full bg-gradient-to-r from-champagne-600 to-champagne-300" style={{ width: `${c.progress}%` }} />
-            <span className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2" style={{ left: `${c.progress}%` }}><span className="tl-dot block h-4 w-4 rounded-full border-[3px] border-midnight bg-champagne shadow-gold" /></span>
+            <div className="tl-fill absolute inset-y-0 left-0 origin-left rounded-full bg-accent" style={{ width: `${c.progress}%` }} />
+            <span className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2" style={{ left: `${c.progress}%` }}><span className="tl-dot block h-4 w-4 rounded-full border-[3px] border-panel bg-accent" /></span>
           </div>
           <div className="mt-4 grid grid-cols-3 text-xs">
-            <div><p className="text-ink/40">{c.tanggal_mulai ? 'Awal kontrak' : 'Tanggal PKS'}</p><p className="mt-0.5 font-semibold text-ink">{tanggal(c.tanggal_mulai ?? c.tanggal_pks)}</p></div>
-            <div className="text-center"><p className="flex items-center justify-center gap-1.5 text-status-warn/90"><Bell className="h-3 w-3" /> Mulai reminder</p><p className="mt-0.5 font-semibold text-ink">{tanggal(`${rem.getFullYear()}-${String(rem.getMonth() + 1).padStart(2, '0')}-${String(rem.getDate()).padStart(2, '0')}`)}</p></div>
-            <div className="text-right"><p className="text-ink/40">Akhir kontrak</p><p className="mt-0.5 font-semibold text-ink">{tanggal(c.tanggal_berakhir)}</p></div>
+            <div><p className="text-ink-faint">{c.tanggal_mulai ? 'Awal kontrak' : 'Tanggal PKS'}</p><p className="mt-0.5 font-semibold text-ink">{tanggal(c.tanggal_mulai ?? c.tanggal_pks)}</p></div>
+            <div className="text-center"><p className="flex items-center justify-center gap-1.5 text-status-warn"><Bell className="h-3 w-3" /> Mulai reminder</p><p className="mt-0.5 font-semibold text-ink">{tanggal(`${rem.getFullYear()}-${String(rem.getMonth() + 1).padStart(2, '0')}-${String(rem.getDate()).padStart(2, '0')}`)}</p></div>
+            <div className="text-right"><p className="text-ink-faint">Akhir kontrak</p><p className="mt-0.5 font-semibold text-ink">{tanggal(c.tanggal_berakhir)}</p></div>
           </div>
         </div>
       </section>
@@ -198,7 +197,7 @@ export default function ContractDetail() {
       <div className="grid items-start gap-6 lg:grid-cols-12">
         {/* ---------- Proses perpanjangan ---------- */}
         <section className="reveal card p-7 lg:col-span-5">
-          <p className="eyebrow text-champagne-600">Perpanjangan</p>
+          <p className="eyebrow text-accent-600">Perpanjangan</p>
           <h3 className="mt-1 font-semibold tracking-tight text-[19px] text-ink">Proses masa kontrak ini</h3>
           <p className="mt-1 text-sm text-ink-muted">Tandai tahap tindak lanjut menjelang kontrak berakhir.</p>
           <div className="mt-5 space-y-2" role="radiogroup" aria-label="Tahap proses perpanjangan">
@@ -207,14 +206,14 @@ export default function ContractDetail() {
               const Icon = p.icon
               return (
                 <button key={p.v} type="button" role="radio" aria-checked={on} onClick={() => setProses(p.v)}
-                  className={clsx('flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition',
-                    on ? 'border-champagne/50 bg-champagne/[.08]' : 'border-fg/[.06] bg-fg/[.02] hover:border-fg/[.14] hover:bg-fg/[.04]')}>
+                  className={clsx('flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition',
+                    on ? 'border-accent/50 bg-accent/[.08]' : 'border-line bg-fg/[.02] hover:border-fg/[.14] hover:bg-fg/[.04]')}>
                   <Icon className={clsx('h-4 w-4 shrink-0', on ? p.tone : 'text-ink-faint')} />
                   <span className="min-w-0 flex-1">
                     <span className={clsx('block text-sm font-semibold', on ? 'text-ink' : 'text-ink-soft')}>{p.label}</span>
                     <span className="block text-xs text-ink-muted">{p.desc}</span>
                   </span>
-                  <span className={clsx('h-4 w-4 shrink-0 rounded-full border-2', on ? 'border-champagne bg-champagne shadow-[inset_0_0_0_3px_rgb(var(--panel))]' : 'border-fg/20')} />
+                  <span className={clsx('h-4 w-4 shrink-0 rounded-full border-2', on ? 'border-accent bg-accent shadow-[inset_0_0_0_3px_rgb(var(--panel))]' : 'border-fg/20')} />
                 </button>
               )
             })}
@@ -223,7 +222,7 @@ export default function ContractDetail() {
           <textarea id="catatan-proses" rows={3} className="input resize-y" value={catatanProses} onChange={(e) => setCatatanProses(e.target.value)}
             placeholder="Contoh: Nota dinas perpanjangan sudah dikirim ke Direksi, menunggu disposisi" />
           {proses === 'diperpanjang' && (
-            <div className="mt-4 flex items-start gap-3 rounded-2xl border border-status-renew/25 bg-status-renewBg p-4 text-sm">
+            <div className="mt-4 flex items-start gap-3 rounded-xl border border-status-renew/25 bg-status-renewBg p-4 text-sm">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-status-renew" />
               <div className="min-w-0 flex-1 text-ink-soft">
                 Kalau addendum sudah ada, langsung <b className="text-ink">catat addendum</b> saja. Tanggal akhir diperbarui dan reminder aktif lagi untuk masa baru.
@@ -245,7 +244,7 @@ export default function ContractDetail() {
         <section className="reveal card p-7 lg:col-span-7">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="eyebrow text-champagne-600">Riwayat</p>
+              <p className="eyebrow text-accent-600">Riwayat</p>
               <h3 className="mt-1 font-semibold tracking-tight text-[19px] text-ink">Masa kontrak & addendum</h3>
             </div>
             <button onClick={() => setAddOpen(true)} className="btn-outline shrink-0 text-[13px]"><FilePlus2 className="h-4 w-4" /> Addendum</button>
@@ -253,8 +252,8 @@ export default function ContractDetail() {
 
           <ol className="relative mt-6 space-y-5 before:absolute before:bottom-2 before:left-[15px] before:top-2 before:w-px before:bg-fg/[.08]">
             <li className="relative flex gap-4">
-              <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-fg/[.1] bg-panel text-ink-muted"><FileText className="h-3.5 w-3.5" /></span>
-              <div className="min-w-0 flex-1 rounded-2xl border border-fg/[.05] bg-fg/[.02] p-4">
+              <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line bg-panel text-ink-muted"><FileText className="h-3.5 w-3.5" /></span>
+              <div className="min-w-0 flex-1 rounded-xl border border-line bg-fg/[.02] p-4">
                 <p className="text-sm font-semibold text-ink">PKS awal <span className="font-normal text-ink-muted">· {c.nomor_pks}</span></p>
                 <p className="mt-1 text-xs text-ink-muted">
                   {tanggal(c.tanggal_mulai ?? c.tanggal_pks)} – {tanggal(first?.tanggal_akhir_lama ?? c.tanggal_berakhir)} · {rupiah(first?.nilai_lama ?? c.nilai_kontrak)}
@@ -263,8 +262,8 @@ export default function ContractDetail() {
             </li>
             {c.addendum.map((a) => (
               <li key={a.id} className="relative flex gap-4">
-                <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-champagne/40 bg-panel text-[11px] font-bold text-champagne">{a.urutan}</span>
-                <div className="min-w-0 flex-1 rounded-2xl border border-fg/[.05] bg-fg/[.02] p-4">
+                <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-accent/40 bg-panel text-[11px] font-bold text-accent">{a.urutan}</span>
+                <div className="min-w-0 flex-1 rounded-xl border border-line bg-fg/[.02] p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-ink">Addendum ke-{a.urutan} <span className="font-normal text-ink-muted">· {a.nomor}</span></p>
@@ -277,7 +276,7 @@ export default function ContractDetail() {
                   </div>
                   <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
                     <span className="text-ink-muted">{tanggal(a.tanggal_akhir_lama)}</span>
-                    <ArrowRight className="h-3.5 w-3.5 text-champagne" />
+                    <ArrowRight className="h-3.5 w-3.5 text-accent" />
                     <span className="font-semibold text-ink">{tanggal(a.tanggal_akhir_baru)}</span>
                     <span className="rounded-full bg-status-renewBg px-2 py-0.5 text-[11px] font-semibold text-status-renew">{tambahDurasi(a.tanggal_akhir_lama, a.tanggal_akhir_baru)}</span>
                   </div>
@@ -291,7 +290,7 @@ export default function ContractDetail() {
             ))}
           </ol>
           {c.addendum.length === 0 && (
-            <p className="mt-5 flex items-center gap-2 rounded-2xl border border-dashed border-fg/[.1] px-4 py-3 text-sm text-ink-muted">
+            <p className="mt-5 flex items-center gap-2 rounded-xl border border-dashed border-line px-4 py-3 text-sm text-ink-muted">
               <History className="h-4 w-4 shrink-0" /> Belum ada addendum. Perpanjangan yang dicatat akan muncul di sini.
             </p>
           )}
@@ -301,9 +300,9 @@ export default function ContractDetail() {
       <div className="grid items-start gap-6 lg:grid-cols-12">
         {/* ---------- Info ---------- */}
         <section className="reveal card p-7 lg:col-span-5">
-          <p className="eyebrow text-champagne-600">Rincian</p>
+          <p className="eyebrow text-accent-600">Rincian</p>
           <h3 className="mt-1 font-semibold tracking-tight text-[19px] text-ink">Data kontrak</h3>
-          <dl className="mt-6 divide-y divide-fg/[.06] text-sm">
+          <dl className="mt-6 divide-y divide-line text-sm">
             {[
               ['Nama kontrak', c.nama_kontrak],
               ['Penyedia', c.penyedia],
@@ -328,7 +327,7 @@ export default function ContractDetail() {
             ['Jaminan kontrak', c.jaminan_kontrak],
             ['Keterangan', c.keterangan],
           ] as const).filter(([, v]) => v).map(([k, v]) => (
-            <div key={k} className="mt-5 rounded-2xl bg-fg/[.03] p-4">
+            <div key={k} className="mt-5 rounded-xl bg-fg/[.03] p-4">
               <p className="eyebrow text-ink-faint">{k}</p>
               <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft">{v}</p>
             </div>
@@ -337,15 +336,15 @@ export default function ContractDetail() {
 
         {/* ---------- File ---------- */}
         <section className="reveal card overflow-hidden lg:col-span-7">
-          <div className="flex items-center justify-between gap-4 border-b border-fg/[.07] px-7 py-5">
+          <div className="flex items-center justify-between gap-4 border-b border-line px-7 py-5">
             <div className="min-w-0">
-              <p className="eyebrow text-champagne-600">Dokumen</p>
+              <p className="eyebrow text-accent-600">Dokumen</p>
               <p className="mt-1 truncate font-semibold text-ink">{c.file_name ?? 'Belum ada file'}</p>
               {c.file_size && <p className="text-xs text-ink-muted">{fileSize(c.file_size)}</p>}
             </div>
             {c.has_file && (
               <div className="flex shrink-0 gap-2">
-                {preview && <a href={preview.url} target="_blank" rel="noreferrer" className="btn-ghost border border-fg/[.07]" title="Buka di tab baru"><ExternalLink className="h-4 w-4" /></a>}
+                {preview && <a href={preview.url} target="_blank" rel="noreferrer" className="btn-ghost border border-line" title="Buka di tab baru"><ExternalLink className="h-4 w-4" /></a>}
                 <button onClick={download} className="btn-outline"><Download className="h-4 w-4" /> Unduh</button>
               </div>
             )}
@@ -353,20 +352,20 @@ export default function ContractDetail() {
           <div className="bg-black/20">
             {!c.has_file ? (
               <div className="flex flex-col items-center py-20 text-center">
-                <FileX2 className="h-10 w-10 text-champagne-500" strokeWidth={1.3} />
+                <FileX2 className="h-10 w-10 text-accent-500" strokeWidth={1.3} />
                 <p className="mt-4 font-semibold tracking-tight text-2xl text-ink">File belum diunggah</p>
                 <p className="mt-1 text-sm text-ink-muted">Tambahkan file PKS lewat menu edit.</p>
                 <Link to={`/kontrak/${c.id}/edit`} className="btn-primary mt-6">Unggah file</Link>
               </div>
             ) : previewLoading ? (
-              <div className="grid h-[560px] place-items-center"><Spinner className="h-6 w-6 text-champagne-600" /></div>
+              <div className="grid h-[560px] place-items-center"><Spinner className="h-6 w-6 text-accent-600" /></div>
             ) : preview?.type === 'pdf' ? (
               <iframe src={preview.url} title="Pratinjau kontrak" className="h-[640px] w-full" />
             ) : preview?.type === 'img' ? (
               <img src={preview.url} alt={c.file_name ?? 'File kontrak'} className="mx-auto max-h-[640px] object-contain p-6" />
             ) : (
               <div className="flex flex-col items-center py-20 text-center">
-                <FileText className="h-10 w-10 text-champagne-500" strokeWidth={1.3} />
+                <FileText className="h-10 w-10 text-accent-500" strokeWidth={1.3} />
                 <p className="mt-4 text-sm text-ink-muted">Pratinjau tidak tersedia untuk file Word. Silakan unduh.</p>
               </div>
             )}
@@ -485,8 +484,8 @@ function AddendumModal({ c, open, onClose, onSaved }: { c: Contract; open: boole
         </div>
         <div className="sm:col-span-2">
           <p className="label">File addendum <span className="font-normal text-ink-faint">(opsional)</span></p>
-          <div className="flex items-center gap-3 rounded-2xl border border-fg/[.08] bg-fg/[.03] p-3">
-            <Paperclip className="h-4 w-4 shrink-0 text-champagne" />
+          <div className="flex items-center gap-3 rounded-xl border border-line bg-fg/[.03] p-3">
+            <Paperclip className="h-4 w-4 shrink-0 text-accent" />
             <p className="min-w-0 flex-1 truncate text-sm text-ink-soft">{file ? `${file.name} · ${fileSize(file.size)}` : 'Belum ada file'}</p>
             {file && <button type="button" className="btn-ghost text-[13px]" onClick={() => setFile(null)}>Batal</button>}
             <button type="button" className="btn-outline text-[13px]" onClick={() => fileInput.current?.click()}>{file ? 'Ganti' : 'Pilih file'}</button>

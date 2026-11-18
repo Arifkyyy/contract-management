@@ -56,12 +56,12 @@ export default function ProfileModal({ open, onClose }: { open: boolean; onClose
           <label className="label" htmlFor="p-nama">Nama</label>
           <input id="p-nama" className="input" value={nama} onChange={(e) => setNama(e.target.value)} minLength={2} required />
         </div>
-        <label className="flex cursor-pointer items-center justify-between rounded-xl border border-fg/[.07] bg-fg/[.03] px-4 py-3">
+        <label className="flex cursor-pointer items-center justify-between rounded-xl border border-line bg-fg/[.03] px-4 py-3">
           <span>
             <span className="block text-sm font-semibold text-ink">Terima email reminder</span>
             <span className="block text-xs text-ink-muted">Kirim email saat ada kontrak sisa ≤ 3 bulan</span>
           </span>
-          <input type="checkbox" checked={terimaEmail} onChange={(e) => setTerimaEmail(e.target.checked)} className="h-5 w-5 accent-[#D4B483]" />
+          <input type="checkbox" checked={terimaEmail} onChange={(e) => setTerimaEmail(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--accent))]" />
         </label>
         <div className="flex justify-end">
           <button className="btn-primary" disabled={saving !== null}>{saving === 'profil' ? <Spinner /> : 'Simpan profil'}</button>
@@ -71,7 +71,7 @@ export default function ProfileModal({ open, onClose }: { open: boolean; onClose
       <div className="hairline my-6" />
 
       <form onSubmit={savePw} className="space-y-4">
-        <p className="eyebrow text-champagne-600">Ganti password</p>
+        <p className="eyebrow text-accent-600">Ganti password</p>
         <input type="password" className="input" placeholder="Password lama" autoComplete="current-password"
           value={pw.lama} onChange={(e) => setPw({ ...pw, lama: e.target.value })} required />
         <div className="grid grid-cols-2 gap-3">

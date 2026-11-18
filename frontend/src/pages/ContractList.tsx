@@ -83,10 +83,10 @@ export default function ContractList() {
   useEffect(load, [load])
 
   useGSAP(() => {
-    gsap.fromTo('.reveal', { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', stagger: 0.06 })
+    gsap.fromTo('.reveal', { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out', stagger: 0.04 })
   }, { scope: root })
   useGSAP(() => {
-    if (!loading && data?.items.length) gsap.fromTo('.row', { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: 'power2.out', stagger: 0.03 })
+    if (!loading && data?.items.length) gsap.fromTo('.row', { y: 8, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: 'power2.out', stagger: 0.04 })
   }, { scope: root, dependencies: [loading, data] })
 
   const toggleStatus = (s: Status | 'semua') => {
@@ -150,29 +150,29 @@ export default function ContractList() {
       <div className="reveal flex flex-wrap items-center gap-3">
         <div className="relative min-w-[260px] flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} className="input h-12 rounded-2xl pl-11 pr-10"
+          <input value={q} onChange={(e) => setQ(e.target.value)} className="input h-12 rounded-xl pl-11 pr-10"
             placeholder="Cari nama kontrak, penyedia, atau nomor PKS…" aria-label="Cari kontrak" />
           {q && <button onClick={() => setQ('')} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-ink-faint hover:text-ink" aria-label="Hapus pencarian"><X className="h-4 w-4" /></button>}
         </div>
         <button onClick={() => setAdvOpen((o) => !o)}
-          className={clsx('btn h-12 rounded-2xl border bg-fg/[.04]', advOpen || activePills.some((p) => p.key !== 'q') ? 'border-champagne text-champagne-700' : 'border-fg/[.07] text-ink hover:border-champagne/60')}>
+          className={clsx('btn h-12 rounded-xl border bg-fg/[.04]', advOpen || activePills.some((p) => p.key !== 'q') ? 'border-accent text-accent-700' : 'border-line text-ink hover:border-accent/60')}>
           <Filter className="h-4 w-4" /> Filter
           {activePills.filter((p) => p.key !== 'q').length > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-champagne px-1 text-[10px] font-bold text-midnight">{activePills.filter((p) => p.key !== 'q').length}</span>
+            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-midnight">{activePills.filter((p) => p.key !== 'q').length}</span>
           )}
         </button>
         <label className="relative">
           <ArrowDownUp className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
-          <select value={sort} onChange={(e) => update({ sort: e.target.value }, false)} className="input h-12 cursor-pointer appearance-none rounded-2xl pl-10 pr-8" aria-label="Urutkan">
+          <select value={sort} onChange={(e) => update({ sort: e.target.value }, false)} className="input h-12 cursor-pointer appearance-none rounded-xl pl-10 pr-8" aria-label="Urutkan">
             {SORTS.map((s) => <option key={s.v} value={s.v}>{s.l}</option>)}
           </select>
         </label>
         <div className="relative">
-          <button onClick={() => setExportOpen((o) => !o)} disabled={exporting || !data?.total} className="btn-outline h-12 rounded-2xl">
+          <button onClick={() => setExportOpen((o) => !o)} disabled={exporting || !data?.total} className="btn-outline h-12 rounded-xl">
             <Download className="h-4 w-4" /> {exporting ? 'Menyiapkan…' : 'Export'}
           </button>
           {exportOpen && (
-            <div className="absolute right-0 top-14 z-30 w-56 rounded-2xl border border-fg/[.07] bg-fg/[.04] p-1.5 shadow-lift" onMouseLeave={() => setExportOpen(false)}>
+            <div className="absolute right-0 top-14 z-30 w-56 rounded-xl border border-line bg-fg/[.04] p-1.5 shadow-lift" onMouseLeave={() => setExportOpen(false)}>
               <button onClick={() => doExport('xlsx')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-fg/[.05]">
                 <FileSpreadsheet className="h-4 w-4 text-status-aktif" /> Excel (.xlsx)
               </button>
@@ -183,7 +183,7 @@ export default function ContractList() {
             </div>
           )}
         </div>
-        <Link to="/kontrak/baru" className="btn-primary h-12 rounded-2xl"><Plus className="h-4 w-4" /> Tambah</Link>
+        <Link to="/kontrak/baru" className="btn-primary h-12 rounded-xl"><Plus className="h-4 w-4" /> Tambah</Link>
       </div>
 
       {/* ---------- Filter lanjutan ---------- */}
@@ -228,7 +228,7 @@ export default function ContractList() {
             </select>
           </div>
           <div className="flex items-end">
-            <button onClick={resetAll} className="btn-ghost w-full border border-fg/[.07]">Reset semua filter</button>
+            <button onClick={resetAll} className="btn-ghost w-full border border-line">Reset semua filter</button>
           </div>
         </div>
       )}
@@ -251,7 +251,7 @@ export default function ContractList() {
           )
         })}
         {activePills.map((p) => (
-          <span key={p.key} className="chip border-champagne/50 bg-champagne/[.08] text-champagne-700">
+          <span key={p.key} className="chip border-accent/50 bg-accent/[.08] text-accent-700">
             {p.label}
             <button onClick={() => { if (p.key === 'q') setQ(''); update({ [p.key]: null }) }} aria-label={`Hapus filter ${p.label}`}><X className="h-3.5 w-3.5" /></button>
           </span>
@@ -261,7 +261,7 @@ export default function ContractList() {
 
       {/* ---------- Tabel ---------- */}
       <div className="reveal card overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-fg/[.07] px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-6 py-4">
           <p className="text-sm text-ink-muted">
             <span className="font-semibold text-ink">{data?.total ?? 0}</span> kontrak
             {data && data.total > 0 && <> · total nilai <span className="font-semibold text-ink">{rupiahCompact(data.total_nilai)}</span></>}
@@ -281,7 +281,7 @@ export default function ContractList() {
             <div className={clsx('hidden overflow-x-auto transition-opacity md:block', loading && 'opacity-50')}>
               <table className="w-full min-w-[860px] text-sm">
                 <thead>
-                  <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+                  <tr className="text-left text-xs font-medium text-ink-muted">
                     <th className="px-6 py-3.5">Kontrak</th>
                     <th className="px-4 py-3.5">Penyedia</th>
                     <th className="px-4 py-3.5">Berakhir</th>
@@ -291,13 +291,13 @@ export default function ContractList() {
                     <th className="px-4 py-3.5" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-fg/[.06]">
+                <tbody className="divide-y divide-line">
                   {data.items.map((c) => (
                     <tr key={c.id} onClick={() => nav(`/kontrak/${c.id}`)} className="row group cursor-pointer transition hover:bg-fg/[.03]">
                       <td className="max-w-[280px] px-6 py-4">
-                        <p className="truncate font-semibold text-ink group-hover:text-champagne-700">{c.nama_kontrak}</p>
+                        <p className="truncate font-semibold text-ink group-hover:text-accent-700">{c.nama_kontrak}</p>
                         <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-ink-muted">
-                          {c.nomor_pks} {c.has_file && <Paperclip className="h-3 w-3 shrink-0 text-champagne-600" aria-label="Ada file" />}
+                          {c.nomor_pks} {c.has_file && <Paperclip className="h-3 w-3 shrink-0 text-accent-600" aria-label="Ada file" />}
                         </p>
                       </td>
                       <td className="max-w-[200px] truncate px-4 py-4 text-ink-soft">{c.penyedia}</td>
@@ -328,7 +328,7 @@ export default function ContractList() {
             </div>
 
             {/* Mobile */}
-            <ul className="divide-y divide-fg/[.06] md:hidden">
+            <ul className="divide-y divide-line md:hidden">
               {data.items.map((c) => (
                 <li key={c.id} className="row">
                   <Link to={`/kontrak/${c.id}`} className="block space-y-3 px-5 py-4">
@@ -351,7 +351,7 @@ export default function ContractList() {
             </ul>
 
             {/* Pagination */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-fg/[.07] px-6 py-4 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-6 py-4 text-sm">
               <label className="flex items-center gap-2 text-ink-muted">
                 Tampilkan
                 <select value={pageSize} onChange={(e) => update({ page_size: e.target.value })} className="input w-auto cursor-pointer py-1.5">
@@ -361,8 +361,8 @@ export default function ContractList() {
               </label>
               <div className="flex items-center gap-2">
                 <span className="text-ink-muted">Halaman <span className="font-semibold text-ink">{page}</span> dari {totalPages}</span>
-                <button disabled={page <= 1} onClick={() => update({ page: String(page - 1) }, false)} className="btn-ghost border border-fg/[.07] bg-fg/[.04] px-2.5" aria-label="Sebelumnya"><ChevronLeft className="h-4 w-4" /></button>
-                <button disabled={page >= totalPages} onClick={() => update({ page: String(page + 1) }, false)} className="btn-ghost border border-fg/[.07] bg-fg/[.04] px-2.5" aria-label="Berikutnya"><ChevronRight className="h-4 w-4" /></button>
+                <button disabled={page <= 1} onClick={() => update({ page: String(page - 1) }, false)} className="btn-ghost border border-line bg-fg/[.04] px-2.5" aria-label="Sebelumnya"><ChevronLeft className="h-4 w-4" /></button>
+                <button disabled={page >= totalPages} onClick={() => update({ page: String(page + 1) }, false)} className="btn-ghost border border-line bg-fg/[.04] px-2.5" aria-label="Berikutnya"><ChevronRight className="h-4 w-4" /></button>
               </div>
             </div>
           </>
@@ -394,5 +394,5 @@ function RowMeta({ c }: { c: Contract }) {
   if (c.status_proses === 'proses') parts.push('Sedang diproses')
   if (c.addendum.length) parts.push(`Addendum ${c.addendum.length}×`)
   if (!parts.length) return null
-  return <p className={clsx('mt-1 whitespace-nowrap text-[11px]', c.status_proses === 'proses' ? 'text-champagne' : 'text-ink-faint')}>{parts.join(' · ')}</p>
+  return <p className={clsx('mt-1 whitespace-nowrap text-[11px]', c.status_proses === 'proses' ? 'text-accent' : 'text-ink-faint')}>{parts.join(' · ')}</p>
 }
